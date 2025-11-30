@@ -7,143 +7,146 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23667eea'/%3E%3Cstop offset='100%25' style='stop-color:%23764ba2'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23g)'/%3E%3Ctext x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-family='Arial'%3E📅%3C/text%3E%3C/svg%3E">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--primary:#667eea;--secondary:#764ba2;--bg:#fafafa;--card:#fff;--text:#262626;--text-light:#8e8e8e;--border:#dbdbdb;--success:#4caf50;--warning:#ff9800;--danger:#f44336;--shadow:0 4px 12px rgba(0,0,0,0.08)}
-body{font-family:'Microsoft YaHei','微软雅黑',sans-serif;background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);min-height:100vh;color:var(--text);overflow:hidden}
+:root{--primary:#667eea;--secondary:#764ba2;--accent:#f093fb;--bg:#fafafa;--card:#fff;--text:#262626;--text-light:#8e8e8e;--border:#e8e8e8;--success:#4caf50;--warning:#ff9800;--danger:#f44336;--shadow:0 8px 32px rgba(102,126,234,0.15);--shadow-sm:0 4px 12px rgba(0,0,0,0.05)}
+body{font-family:'Microsoft YaHei','微软雅黑',-apple-system,BlinkMacSystemFont,sans-serif;background:linear-gradient(135deg,#f5f7fa 0%,#e4e8f0 50%,#d5dbe8 100%);min-height:100vh;color:var(--text);overflow:hidden}
 .app{display:flex;flex-direction:column;height:100vh;max-width:2500px;margin:0 auto}
-.navbar{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);position:sticky;top:0;z-index:100}
-.nav-section{display:flex;align-items:center;gap:16px}
-.nav-item{display:flex;align-items:center;gap:8px}
-.nav-label{font-size:13px;opacity:0.9}
+.navbar{background:linear-gradient(135deg,var(--primary) 0%,var(--secondary) 50%,var(--accent) 100%);color:#fff;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 20px rgba(102,126,234,0.3);position:sticky;top:0;z-index:100}
+.nav-section{display:flex;align-items:center;gap:20px}
+.nav-item{display:flex;align-items:center;gap:10px}
+.nav-label{font-size:14px;opacity:0.9;font-weight:500}
 .select-wrap{position:relative}
-.select-wrap select{appearance:none;background:#fff;border:none;padding:8px 32px 8px 12px;border-radius:8px;font-family:inherit;font-size:14px;cursor:pointer;transition:all 0.2s;min-width:80px}
-.select-wrap select:hover{transform:scale(1.02);box-shadow:0 2px 8px rgba(0,0,0,0.15)}
-.select-wrap::after{content:'▼';position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:10px;pointer-events:none;color:var(--text-light)}
-.time-display{background:rgba(255,255,255,0.2);padding:8px 16px;border-radius:8px;font-size:14px;display:flex;align-items:center;gap:8px}
-.remaining-hours{background:rgba(255,255,255,0.15);padding:8px 16px;border-radius:8px;font-weight:bold}
-.btn{padding:8px 16px;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px}
-.btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.2)}
-.btn:active{transform:translateY(0)}
+.select-wrap select{appearance:none;background:rgba(255,255,255,0.95);border:none;padding:10px 36px 10px 16px;border-radius:12px;font-family:inherit;font-size:14px;cursor:pointer;transition:all 0.3s;min-width:90px;font-weight:500;color:var(--text)}
+.select-wrap select:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.15)}
+.select-wrap::after{content:'▼';position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:10px;pointer-events:none;color:var(--primary)}
+.time-display{background:rgba(255,255,255,0.2);backdrop-filter:blur(10px);padding:10px 20px;border-radius:12px;font-size:14px;display:flex;align-items:center;gap:10px;font-weight:500}
+.remaining-hours{background:rgba(255,255,255,0.2);backdrop-filter:blur(10px);padding:10px 20px;border-radius:12px;font-weight:600;font-size:14px}
+.btn{padding:10px 20px;border:none;border-radius:12px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:500;transition:all 0.3s;display:inline-flex;align-items:center;justify-content:center;gap:8px;position:relative;overflow:hidden}
+.btn:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(0,0,0,0.15)}
+.btn:active{transform:translateY(-1px)}
 .btn-primary{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff}
-.btn-secondary{background:#fff;color:var(--text)}
-.btn-success{background:var(--success);color:#fff}
-.btn-warning{background:var(--warning);color:#fff}
-.btn-danger{background:var(--danger);color:#fff}
-.btn-ghost{background:rgba(255,255,255,0.2);color:#fff}
-.btn-ghost:hover{background:rgba(255,255,255,0.3)}
-.btn-ghost.active{background:#fff;color:var(--primary)}
+.btn-secondary{background:#fff;color:var(--text);border:1px solid var(--border)}
+.btn-time{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff}
+.btn-success{background:linear-gradient(135deg,#43a047,#66bb6a);color:#fff}
+.btn-warning{background:linear-gradient(135deg,#ef6c00,#ffa726);color:#fff}
+.btn-danger{background:linear-gradient(135deg,#e53935,#ef5350);color:#fff}
+.btn-ghost{background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);color:#fff;border:1px solid rgba(255,255,255,0.2)}
+.btn-ghost:hover{background:rgba(255,255,255,0.25)}
+.btn-ghost.active{background:#fff;color:var(--primary);border-color:#fff}
 .main-content{display:flex;flex:1;overflow:hidden}
-.sidebar{width:320px;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
-.sidebar-section{padding:16px;border-bottom:1px solid var(--border)}
-.section-title{font-size:15px;font-weight:bold;margin-bottom:12px;display:flex;align-items:center;gap:8px;color:var(--primary)}
-.section-title::before{content:'';width:4px;height:16px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:2px}
-.form-group{margin-bottom:12px}
-.form-label{font-size:12px;color:var(--text-light);margin-bottom:4px;display:block}
-.form-input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;transition:all 0.2s}
-.form-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(102,126,234,0.1)}
-.form-select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;background:#fff;cursor:pointer}
-.form-row{display:flex;gap:8px}
+.sidebar{width:340px;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;box-shadow:var(--shadow-sm)}
+.sidebar-section{padding:24px;border-bottom:1px solid var(--border)}
+.section-title{font-size:16px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:12px;color:var(--text)}
+.section-title::before{content:'';width:4px;height:20px;background:linear-gradient(180deg,var(--primary),var(--secondary));border-radius:2px}
+.form-group{margin-bottom:16px}
+.form-label{font-size:13px;color:var(--text-light);margin-bottom:8px;display:block;font-weight:500}
+.form-input{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:12px;font-family:inherit;font-size:14px;transition:all 0.3s;background:#fff}
+.form-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px rgba(102,126,234,0.1)}
+.form-select{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:12px;font-family:inherit;font-size:14px;background:#fff;cursor:pointer}
+.form-row{display:flex;gap:12px}
 .form-row>*{flex:1}
-.checkbox-wrap{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px}
-.checkbox-wrap input{width:18px;height:18px;accent-color:var(--primary)}
-.item-list{max-height:200px;overflow-y:auto}
-.item-card{background:var(--bg);border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;transition:all 0.2s}
-.item-card:hover{transform:translateX(4px);box-shadow:var(--shadow)}
+.checkbox-wrap{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;padding:8px 0}
+.checkbox-wrap input{width:20px;height:20px;accent-color:var(--primary)}
+.item-list{max-height:180px;overflow-y:auto;margin-top:16px}
+.item-card{background:linear-gradient(135deg,#f8f9fa,#fff);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;transition:all 0.3s}
+.item-card:hover{transform:translateX(6px);box-shadow:var(--shadow-sm);border-color:var(--primary)}
 .item-info{flex:1;min-width:0}
-.item-name{font-weight:bold;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.item-meta{font-size:11px;color:var(--text-light);margin-top:2px}
-.item-actions{display:flex;gap:4px}
-.item-actions .btn{padding:4px 8px;font-size:12px}
-.color-dot{width:12px;height:12px;border-radius:50%;margin-right:8px;flex-shrink:0}
-.btn-group{display:flex;gap:8px;margin-top:12px}
-.btn-group .btn{flex:1;justify-content:center}
-.table-area{flex:1;display:flex;flex-direction:column;padding:16px;overflow:hidden}
-.table-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.week-nav{display:flex;align-items:center;gap:12px}
-.week-title{font-size:18px;font-weight:bold;background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.table-actions{display:flex;gap:8px}
-.schedule-grid{flex:4;background:var(--card);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+.item-name{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item-meta{font-size:12px;color:var(--text-light);margin-top:4px}
+.item-actions{display:flex;gap:6px}
+.item-actions .btn{padding:6px 12px;font-size:12px}
+.color-dot{width:14px;height:14px;border-radius:50%;margin-right:10px;flex-shrink:0;box-shadow:0 2px 4px rgba(0,0,0,0.1)}
+.btn-group{display:flex;gap:10px;margin-top:16px}
+.btn-group .btn{flex:1}
+.table-area{flex:1;display:flex;flex-direction:column;padding:24px;overflow:hidden}
+.table-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.week-nav{display:flex;align-items:center;gap:16px}
+.week-title{font-size:22px;font-weight:700;background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;min-width:160px;text-align:center}
+.table-actions{display:flex;gap:10px}
+.schedule-grid{flex:4;background:var(--card);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;transition:all 0.4s}
+.schedule-grid.animating{opacity:0.5;transform:scale(0.98)}
 .grid-container{flex:1;overflow:auto}
 .grid-table{width:100%;border-collapse:collapse;table-layout:fixed}
-.grid-table th,.grid-table td{border:1px solid var(--border);text-align:center;padding:2px;font-size:11px;height:28px;position:relative}
-.grid-table th{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;font-weight:bold;position:sticky;top:0;z-index:10}
-.grid-table .time-col{width:60px;background:var(--bg);font-weight:bold;color:var(--text-light);position:sticky;left:0;z-index:5}
-.grid-cell{cursor:pointer;transition:all 0.15s;position:relative}
-.grid-cell:hover{background:rgba(102,126,234,0.1);transform:scale(1.02)}
-.grid-cell.selected{background:rgba(102,126,234,0.3);box-shadow:inset 0 0 0 2px var(--primary)}
-.grid-cell.filled{color:#fff;font-weight:bold;font-size:10px}
-.grid-cell .hour-mark{position:absolute;top:1px;left:2px;font-size:8px;opacity:0.8}
+.grid-table th,.grid-table td{border:1px solid var(--border);text-align:center;padding:4px;font-size:11px;height:30px;position:relative}
+.grid-table th{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;font-weight:600;position:sticky;top:0;z-index:10}
+.grid-table .time-col{width:65px;background:#f8f9fa;font-weight:600;color:var(--text-light);position:sticky;left:0;z-index:5}
+.grid-cell{cursor:pointer;transition:all 0.2s;position:relative}
+.grid-cell:hover{background:rgba(102,126,234,0.08)}
+.grid-cell.selected{background:rgba(102,126,234,0.25);box-shadow:inset 0 0 0 2px var(--primary)}
+.grid-cell.filled{color:#fff;font-weight:600;font-size:10px}
+.grid-cell .hour-mark{position:absolute;top:2px;left:4px;font-size:9px;opacity:0.85}
 .grid-cell.status-complete{box-shadow:inset 0 0 0 3px var(--success)}
 .grid-cell.status-delayed{box-shadow:inset 0 0 0 3px var(--warning)}
 .grid-cell.status-incomplete{box-shadow:inset 0 0 0 3px var(--danger)}
-.grid-cell.category-border{box-shadow:inset 0 0 0 2px currentColor}
-.monthly-preview{flex:1;background:var(--card);border-radius:12px;box-shadow:var(--shadow);margin-top:12px;padding:16px;overflow-y:auto}
-.monthly-title{font-size:14px;font-weight:bold;margin-bottom:12px;color:var(--primary)}
-.todo-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
-.todo-item{background:var(--bg);border-radius:8px;padding:10px;display:flex;align-items:center;gap:8px;transition:all 0.2s}
-.todo-item:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
-.todo-priority{width:8px;height:8px;border-radius:50%}
+.grid-cell .delete-btn{position:absolute;top:2px;right:2px;width:16px;height:16px;background:var(--danger);color:#fff;border:none;border-radius:50%;font-size:10px;cursor:pointer;opacity:0;transition:all 0.2s;display:flex;align-items:center;justify-content:center}
+.grid-cell:hover .delete-btn{opacity:1}
+.monthly-preview{flex:1;background:var(--card);border-radius:16px;box-shadow:var(--shadow);margin-top:16px;padding:20px;overflow-y:auto}
+.monthly-title{font-size:16px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.todo-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.todo-item{background:linear-gradient(135deg,#f8f9fa,#fff);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;align-items:center;gap:10px;transition:all 0.3s}
+.todo-item:hover{transform:translateY(-4px);box-shadow:var(--shadow-sm)}
+.todo-priority{width:10px;height:10px;border-radius:50%}
 .todo-priority.high{background:var(--danger)}
 .todo-priority.medium{background:var(--warning)}
 .todo-priority.low{background:var(--success)}
 .todo-info{flex:1;min-width:0}
-.todo-name{font-size:13px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.todo-hours{font-size:11px;color:var(--text-light)}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;visibility:hidden;transition:all 0.3s}
+.todo-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.todo-hours{font-size:12px;color:var(--text-light);margin-top:4px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;visibility:hidden;transition:all 0.3s;backdrop-filter:blur(4px)}
 .modal-overlay.active{opacity:1;visibility:visible}
-.modal{background:var(--card);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.3);max-width:90vw;max-height:90vh;overflow:hidden;transform:scale(0.9);transition:all 0.3s}
-.modal-overlay.active .modal{transform:scale(1)}
-.modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.modal-title{font-size:18px;font-weight:bold}
-.modal-close{width:32px;height:32px;border:none;background:var(--bg);border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.modal{background:var(--card);border-radius:20px;box-shadow:0 25px 80px rgba(0,0,0,0.3);max-width:90vw;max-height:90vh;overflow:hidden;transform:scale(0.9) translateY(20px);transition:all 0.3s}
+.modal-overlay.active .modal{transform:scale(1) translateY(0)}
+.modal-header{padding:24px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#f8f9fa,#fff)}
+.modal-title{font-size:20px;font-weight:700}
+.modal-close{width:36px;height:36px;border:none;background:var(--bg);border-radius:50%;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;transition:all 0.3s}
 .modal-close:hover{background:var(--danger);color:#fff;transform:rotate(90deg)}
-.modal-body{padding:24px;max-height:60vh;overflow-y:auto}
-.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.modal-body{padding:28px;max-height:60vh;overflow-y:auto}
+.modal-footer{padding:20px 28px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:12px;background:linear-gradient(135deg,#f8f9fa,#fff)}
 .time-select-modal .modal{width:95vw;height:95vh;max-width:none;max-height:none;display:flex;flex-direction:column}
-.time-select-modal .modal-body{flex:1;padding:12px;overflow:auto}
-.time-select-modal .grid-table{width:100%}
-.time-select-modal .grid-table th,.time-select-modal .grid-table td{height:32px;font-size:12px}
-.history-view{display:none;flex:1;padding:24px;overflow-y:auto}
+.time-select-modal .modal-body{flex:1;padding:16px;overflow:auto}
+.time-select-modal .grid-table th,.time-select-modal .grid-table td{height:34px;font-size:13px}
+.history-view{display:none;flex:1;padding:28px;overflow-y:auto}
 .history-view.active{display:block}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-bottom:24px}
-.stat-card{background:var(--card);border-radius:12px;padding:20px;box-shadow:var(--shadow)}
-.stat-title{font-size:14px;color:var(--text-light);margin-bottom:8px}
-.stat-value{font-size:32px;font-weight:bold;background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.chart-container{background:var(--card);border-radius:12px;padding:20px;box-shadow:var(--shadow);margin-bottom:24px}
-.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.chart-title{font-size:16px;font-weight:bold}
-.chart-filters{display:flex;gap:8px}
-.chart-area{height:200px;display:flex;align-items:flex-end;gap:4px;padding:20px 0;border-bottom:2px solid var(--border)}
-.chart-bar{flex:1;background:linear-gradient(to top,var(--primary),var(--secondary));border-radius:4px 4px 0 0;transition:all 0.3s;min-height:4px;position:relative}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-bottom:28px}
+.stat-card{background:var(--card);border-radius:16px;padding:24px;box-shadow:var(--shadow)}
+.stat-title{font-size:14px;color:var(--text-light);margin-bottom:12px;font-weight:500}
+.stat-value{font-size:36px;font-weight:700;background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.chart-container{background:var(--card);border-radius:16px;padding:24px;box-shadow:var(--shadow);margin-bottom:28px}
+.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.chart-title{font-size:18px;font-weight:700}
+.chart-filters{display:flex;gap:10px}
+.chart-area{height:200px;display:flex;align-items:flex-end;gap:6px;padding:24px 0;border-bottom:2px solid var(--border)}
+.chart-bar{flex:1;background:linear-gradient(to top,var(--primary),var(--secondary));border-radius:6px 6px 0 0;transition:all 0.3s;min-height:4px;position:relative}
 .chart-bar:hover{opacity:0.8}
-.chart-bar::after{content:attr(data-value);position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:10px;white-space:nowrap}
-.chart-labels{display:flex;gap:4px;padding-top:8px}
-.chart-label{flex:1;text-align:center;font-size:10px;color:var(--text-light)}
-.ctdp-list{background:var(--card);border-radius:12px;padding:20px;box-shadow:var(--shadow)}
-.ctdp-title{font-size:16px;font-weight:bold;margin-bottom:16px}
-.ctdp-item{display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--bg);border-radius:8px;margin-bottom:8px}
-.ctdp-name{font-weight:bold}
-.ctdp-count{font-size:24px;font-weight:bold;color:var(--primary)}
-.history-table{background:var(--card);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+.chart-bar::after{content:attr(data-value);position:absolute;top:-24px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:600}
+.chart-labels{display:flex;gap:6px;padding-top:12px}
+.chart-label{flex:1;text-align:center;font-size:11px;color:var(--text-light)}
+.ctdp-list{background:var(--card);border-radius:16px;padding:24px;box-shadow:var(--shadow)}
+.ctdp-title{font-size:18px;font-weight:700;margin-bottom:20px}
+.ctdp-item{display:flex;align-items:center;justify-content:space-between;padding:16px;background:linear-gradient(135deg,#f8f9fa,#fff);border-radius:12px;margin-bottom:12px;border:1px solid var(--border)}
+.ctdp-name{font-weight:600}
+.ctdp-count{font-size:28px;font-weight:700;color:var(--primary)}
+.history-table{background:var(--card);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;margin-top:28px}
 .history-table table{width:100%;border-collapse:collapse}
-.history-table th,.history-table td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--border)}
-.history-table th{background:var(--bg);font-weight:bold}
-.history-table tr:hover{background:var(--bg)}
-.color-picker-wrap{display:flex;align-items:center;gap:8px}
-.color-picker-wrap input[type="color"]{width:40px;height:40px;border:none;border-radius:8px;cursor:pointer;padding:0}
-.combination-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg);border-radius:8px;margin-bottom:8px}
-.combination-item input[type="radio"]{width:18px;height:18px;accent-color:var(--primary)}
+.history-table th,.history-table td{padding:16px 20px;text-align:left;border-bottom:1px solid var(--border)}
+.history-table th{background:linear-gradient(135deg,#f8f9fa,#fff);font-weight:600}
+.history-table tr:hover{background:#f8f9fa}
+.color-picker-wrap{display:flex;align-items:center;gap:12px}
+.color-picker-wrap input[type="color"]{width:48px;height:48px;border:none;border-radius:12px;cursor:pointer;padding:0}
+.combination-item{display:flex;align-items:center;gap:16px;padding:16px;background:linear-gradient(135deg,#f8f9fa,#fff);border-radius:12px;margin-bottom:12px;border:1px solid var(--border)}
+.combination-item input[type="radio"]{width:20px;height:20px;accent-color:var(--primary)}
 .combination-info{flex:1}
-.combination-name{font-weight:bold}
+.combination-name{font-weight:600}
 .schedule-view{display:flex;flex:1;overflow:hidden}
 .schedule-view.hidden{display:none}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-.animate-in{animation:fadeIn 0.3s ease}
+.animate-in{animation:fadeIn 0.4s ease}
 .ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,0.4);transform:scale(0);animation:ripple 0.6s linear;pointer-events:none}
 @keyframes ripple{to{transform:scale(4);opacity:0}}
-::-webkit-scrollbar{width:8px;height:8px}
-::-webkit-scrollbar-track{background:var(--bg);border-radius:4px}
-::-webkit-scrollbar-thumb{background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:4px}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:#f0f0f0;border-radius:5px}
+::-webkit-scrollbar-thumb{background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:5px}
 ::-webkit-scrollbar-thumb:hover{background:var(--primary)}
 </style>
 </head>
@@ -197,10 +200,10 @@ body{font-family:'Microsoft YaHei','微软雅黑',sans-serif;background:linear-g
 </select>
 </div>
 <div class="form-group">
-<button class="btn btn-secondary" id="fixedTimeBtn" style="width:100%">⏰ 选择时间</button>
+<button class="btn btn-time" id="fixedTimeBtn" style="width:100%">⏰ 选择时间</button>
 </div>
 <button class="btn btn-primary" id="addFixedBtn" style="width:100%">✓ 确定</button>
-<div class="item-list" id="fixedList" style="margin-top:12px"></div>
+<div class="item-list" id="fixedList"></div>
 <div class="btn-group">
 <button class="btn btn-secondary" id="saveFixedComboBtn">💾 保存组合</button>
 <button class="btn btn-secondary" id="loadFixedComboBtn">📂 呼出组合</button>
@@ -239,7 +242,7 @@ body{font-family:'Microsoft YaHei','微软雅黑',sans-serif;background:linear-g
 </label>
 </div>
 <button class="btn btn-primary" id="addMonthlyBtn" style="width:100%">✓ 确定</button>
-<div class="item-list" id="monthlyList" style="margin-top:12px"></div>
+<div class="item-list" id="monthlyList"></div>
 <div class="btn-group">
 <button class="btn btn-secondary" id="saveMonthlyComboBtn">💾 保存组合</button>
 <button class="btn btn-secondary" id="loadMonthlyComboBtn">📂 呼出组合</button>
@@ -255,14 +258,14 @@ body{font-family:'Microsoft YaHei','微软雅黑',sans-serif;background:linear-g
 <label class="form-label">分类颜色</label>
 <div class="color-picker-wrap">
 <input type="color" id="categoryColor" value="#667eea">
-<span id="colorPreview" style="padding:8px 16px;border-radius:8px;color:#fff;background:#667eea">预览</span>
+<span id="colorPreview" style="padding:10px 20px;border-radius:10px;color:#fff;background:#667eea;font-weight:500">预览</span>
 </div>
 </div>
 <div class="form-group">
-<button class="btn btn-secondary" id="categoryTimeBtn" style="width:100%">⏰ 分类时段</button>
+<button class="btn btn-time" id="categoryTimeBtn" style="width:100%">⏰ 分类时段</button>
 </div>
 <button class="btn btn-primary" id="addCategoryBtn" style="width:100%">✓ 保存</button>
-<div class="item-list" id="categoryList" style="margin-top:12px"></div>
+<div class="item-list" id="categoryList"></div>
 </div>
 </aside>
 <main class="table-area">
@@ -279,7 +282,7 @@ body{font-family:'Microsoft YaHei','微软雅黑',sans-serif;background:linear-g
 <button class="btn btn-secondary" id="exportJpgBtn">🖼️ 导出JPG</button>
 </div>
 </div>
-<div class="schedule-grid">
+<div class="schedule-grid" id="scheduleGrid">
 <div class="grid-container">
 <table class="grid-table" id="scheduleTable">
 <thead id="tableHead"></thead>
@@ -312,8 +315,8 @@ body{font-family:'Microsoft YaHei','微软雅黑',sans-serif;background:linear-g
 <div class="chart-header">
 <h3 class="chart-title">📈 完成率趋势</h3>
 <div class="chart-filters">
-<button class="btn btn-secondary btn-sm active" id="filterWeek">本周</button>
-<button class="btn btn-secondary btn-sm" id="filterMonth">本月</button>
+<button class="btn btn-secondary active" id="filterWeek">本周</button>
+<button class="btn btn-secondary" id="filterMonth">本月</button>
 </div>
 </div>
 <div class="chart-area" id="chartArea"></div>
@@ -323,8 +326,8 @@ body{font-family:'Microsoft YaHei','微软雅黑',sans-serif;background:linear-g
 <h3 class="ctdp-title">🔗 CTDP 记录</h3>
 <div id="ctdpItems"></div>
 </div>
-<div class="history-table" style="margin-top:24px">
-<h3 style="padding:16px;font-weight:bold">📜 历史计划表</h3>
+<div class="history-table">
+<h3 style="padding:20px;font-weight:700">📜 历史计划表</h3>
 <table>
 <thead>
 <tr>
@@ -369,29 +372,29 @@ body{font-family:'Microsoft YaHei','微软雅黑',sans-serif;background:linear-g
 </div>
 </div>
 <div class="modal-overlay" id="statusModal">
-<div class="modal" style="width:300px">
+<div class="modal" style="width:320px">
 <div class="modal-header">
 <h3 class="modal-title">设定状态</h3>
 <button class="modal-close" onclick="closeStatusModal()">×</button>
 </div>
 <div class="modal-body">
-<div style="display:flex;flex-direction:column;gap:12px">
-<button class="btn btn-success" onclick="setStatus('complete')" style="width:100%">✓ 已完成</button>
-<button class="btn btn-warning" onclick="setStatus('delayed')" style="width:100%">⏰ 延期</button>
-<button class="btn btn-danger" onclick="setStatus('incomplete')" style="width:100%">✗ 未完成</button>
-<button class="btn btn-secondary" onclick="setStatus('')" style="width:100%">清除状态</button>
+<div style="display:flex;flex-direction:column;gap:14px">
+<button class="btn btn-success" onclick="setStatus('complete')" style="width:100%;padding:14px">✓ 已完成</button>
+<button class="btn btn-warning" onclick="setStatus('delayed')" style="width:100%;padding:14px">⏰ 延期</button>
+<button class="btn btn-danger" onclick="setStatus('incomplete')" style="width:100%;padding:14px">✗ 未完成</button>
+<button class="btn btn-secondary" onclick="setStatus('')" style="width:100%;padding:14px">清除状态</button>
 </div>
 </div>
 </div>
 </div>
-<div class="modal-overlay time-select-modal" id="manualAdjustModal">
+<div class="modal-overlay time-select-modal" id="manualAdjustModal" style="z-index:1001">
 <div class="modal">
 <div class="modal-header">
 <h3 class="modal-title">手动调整</h3>
 <button class="modal-close" onclick="closeManualAdjustModal()">×</button>
 </div>
 <div class="modal-body">
-<p style="margin-bottom:12px;color:var(--text-light)">点击单元格添加临时日程，拖拽单元格交换位置</p>
+<p style="margin-bottom:16px;color:var(--text-light);font-size:14px">点击空白单元格添加临时日程，拖拽单元格交换位置，悬停显示删除按钮</p>
 <table class="grid-table" id="manualAdjustTable">
 <thead id="manualAdjustHead"></thead>
 <tbody id="manualAdjustBody"></tbody>
@@ -400,6 +403,37 @@ body{font-family:'Microsoft YaHei','微软雅黑',sans-serif;background:linear-g
 <div class="modal-footer">
 <button class="btn btn-secondary" onclick="closeManualAdjustModal()">取消</button>
 <button class="btn btn-primary" onclick="confirmManualAdjust()">✓ 确认</button>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="editModal" style="z-index:1002">
+<div class="modal" style="width:450px">
+<div class="modal-header">
+<h3 class="modal-title" id="editModalTitle">编辑安排</h3>
+<button class="modal-close" onclick="closeEditModal()">×</button>
+</div>
+<div class="modal-body" id="editModalBody"></div>
+<div class="modal-footer">
+<button class="btn btn-secondary" onclick="closeEditModal()">取消</button>
+<button class="btn btn-primary" id="editModalSave">保存修改</button>
+</div>
+</div>
+</div>
+<div class="modal-overlay" id="tempScheduleModal" style="z-index:1003">
+<div class="modal" style="width:400px">
+<div class="modal-header">
+<h3 class="modal-title">添加临时日程</h3>
+<button class="modal-close" onclick="closeTempScheduleModal()">×</button>
+</div>
+<div class="modal-body">
+<div class="form-group">
+<label class="form-label">日程名称</label>
+<input type="text" class="form-input" id="tempScheduleName" placeholder="输入名称">
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn btn-secondary" onclick="closeTempScheduleModal()">取消</button>
+<button class="btn btn-primary" id="confirmTempSchedule">添加</button>
 </div>
 </div>
 </div>
@@ -425,13 +459,16 @@ const state = {
   cellStatuses: {},
   tempSchedules: {},
   ctdpRecords: {},
-  history: []
+  history: [],
+  pendingOverflow: null
 };
 const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
 const priorityOrder = { high: 0, medium: 1, low: 2 };
 let currentTimeSelectMode = null;
 let currentEditItem = null;
+let currentEditType = null;
 let currentStatusCell = null;
+let currentTempKey = null;
 let dragSource = null;
 
 function init() {
@@ -504,33 +541,55 @@ function getMaxWeeks(year, month) {
   return Math.ceil((daysInMonth + dayOfWeek - 1) / 7);
 }
 
+function animateTableChange(callback) {
+  const grid = document.getElementById('scheduleGrid');
+  grid.classList.add('animating');
+  setTimeout(() => {
+    callback();
+    grid.classList.remove('animating');
+  }, 200);
+}
 function renderTable() {
   const thead = document.getElementById('tableHead');
   const tbody = document.getElementById('tableBody');
   const dates = getWeekDates(state.year, state.month, state.week);
   document.getElementById('weekTitle').textContent = state.month + '月 第' + state.week + '周';
   let headerHtml = '<tr><th class="time-col">时间</th>';
-  dates.forEach((d, i) => {
+  for (let i = 0; i < dates.length; i++) {
+    const d = dates[i];
     if (d) {
       headerHtml += '<th>' + days[i] + '<br>' + String(state.month).padStart(2, '0') + '/' + String(d.day).padStart(2, '0') + '</th>';
     } else {
       headerHtml += '<th style="background:#ccc"></th>';
     }
-  });
+  }
   headerHtml += '</tr>';
   thead.innerHTML = headerHtml;
+  
+  const mergeInfo = buildMergeInfo(dates);
   let bodyHtml = '';
+  
   for (let h = CONFIG.START_HOUR; h <= CONFIG.END_HOUR; h++) {
     for (let half = 0; half < 2; half++) {
       const timeStr = String(h).padStart(2, '0') + ':' + (half === 0 ? '00' : '30');
       bodyHtml += '<tr><td class="time-col">' + timeStr + '</td>';
-      dates.forEach((d, dayIdx) => {
+      for (let dayIdx = 0; dayIdx < dates.length; dayIdx++) {
+        const d = dates[dayIdx];
         if (d) {
           const cellKey = state.year + '-' + state.month + '-' + d.day + '-' + h + '-' + half;
+          const mapKey = dayIdx + '-' + h + '-' + half;
+          const info = mergeInfo[mapKey];
+          
+          if (info && info.skip) {
+            continue;
+          }
+          
           const schedule = getCellSchedule(dayIdx, h, half, d.day);
           let cellClass = 'grid-cell';
           let cellStyle = '';
           let cellContent = '';
+          let rowspan = info ? info.rowspan : 1;
+          
           if (schedule) {
             cellClass += ' filled';
             if (schedule.color) {
@@ -548,28 +607,70 @@ function renderTable() {
           }
           const status = state.cellStatuses[cellKey];
           if (status) cellClass += ' status-' + status;
-          bodyHtml += '<td class="' + cellClass + '" style="' + cellStyle + '" data-key="' + cellKey + '" data-day="' + dayIdx + '" data-hour="' + h + '" data-half="' + half + '" data-date="' + d.day + '">' + cellContent + '</td>';
+          
+          if (rowspan > 1) {
+            bodyHtml += '<td class="' + cellClass + '" style="' + cellStyle + '" data-key="' + cellKey + '" data-day="' + dayIdx + '" data-hour="' + h + '" data-half="' + half + '" data-date="' + d.day + '" rowspan="' + rowspan + '">' + cellContent + '</td>';
+          } else {
+            bodyHtml += '<td class="' + cellClass + '" style="' + cellStyle + '" data-key="' + cellKey + '" data-day="' + dayIdx + '" data-hour="' + h + '" data-half="' + half + '" data-date="' + d.day + '">' + cellContent + '</td>';
+          }
         } else {
           bodyHtml += '<td style="background:#eee"></td>';
         }
-      });
+      }
       bodyHtml += '</tr>';
     }
   }
   tbody.innerHTML = bodyHtml;
   document.querySelectorAll('#tableBody .grid-cell').forEach(cell => {
-    cell.addEventListener('click', (e) => {
-      if (cell.classList.contains('filled')) {
-        currentStatusCell = cell.dataset.key;
+    cell.addEventListener('click', function(e) {
+      if (this.classList.contains('filled')) {
+        currentStatusCell = this.dataset.key;
         document.getElementById('statusModal').classList.add('active');
       }
     });
   });
 }
+
+function buildMergeInfo(dates) {
+  const info = {};
+  for (let dayIdx = 0; dayIdx < dates.length; dayIdx++) {
+    const d = dates[dayIdx];
+    if (!d) continue;
+    
+    let prevSchedule = null;
+    let prevKey = null;
+    let mergeStart = null;
+    
+    for (let h = CONFIG.START_HOUR; h <= CONFIG.END_HOUR; h++) {
+      for (let half = 0; half < 2; half++) {
+        const mapKey = dayIdx + '-' + h + '-' + half;
+        const schedule = getCellSchedule(dayIdx, h, half, d.day);
+        
+        if (schedule && prevSchedule && schedule.name === prevSchedule.name && schedule.type === prevSchedule.type) {
+          info[mapKey] = { skip: true };
+          if (info[mergeStart]) {
+            info[mergeStart].rowspan++;
+          }
+        } else {
+          if (schedule) {
+            info[mapKey] = { rowspan: 1, skip: false };
+            mergeStart = mapKey;
+          } else {
+            info[mapKey] = { rowspan: 1, skip: false };
+            mergeStart = null;
+          }
+          prevSchedule = schedule;
+          prevKey = mapKey;
+        }
+      }
+    }
+  }
+  return info;
+}
 function getCellSchedule(dayIdx, hour, half, dateNum) {
   const key = state.year + '-' + state.month + '-' + dateNum + '-' + hour + '-' + half;
   if (state.tempSchedules[key]) {
-    return { name: state.tempSchedules[key], color: null };
+    return { name: state.tempSchedules[key], color: '#999', type: 'temp' };
   }
   for (const fs of state.fixedSchedules) {
     for (const t of fs.times) {
@@ -582,7 +683,10 @@ function getCellSchedule(dayIdx, hour, half, dateNum) {
   const monthlyByPriority = [...state.monthlySchedules].sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
   let hourCounter = {};
   const daysInMonth = getDaysInMonth(state.year, state.month);
-  for (let d = 1; d <= daysInMonth; d++) {
+  const today = new Date();
+  const todayNum = (state.year === today.getFullYear() && state.month === today.getMonth() + 1) ? today.getDate() : 0;
+  
+  for (let d = 2; d <= daysInMonth; d++) {
     for (let h = CONFIG.START_HOUR; h <= CONFIG.END_HOUR; h++) {
       for (let hf = 0; hf < 2; hf++) {
         const checkDate = new Date(state.year, state.month - 1, d);
@@ -600,7 +704,6 @@ function getCellSchedule(dayIdx, hour, half, dateNum) {
         }
         if (isFixed) continue;
         for (const ms of monthlyByPriority) {
-          if (!hourCounter[ms.name]) hourCounter[ms.name] = 0;
           const neededHalfHours = ms.hours * 2;
           if (hourCounter[ms.name] < neededHalfHours) {
             const cat = state.categories.find(c => c.name === ms.category);
@@ -625,6 +728,44 @@ function getCellSchedule(dayIdx, hour, half, dateNum) {
     }
   }
   return null;
+}
+
+function checkMonthlyOverflow() {
+  const monthlyByPriority = [...state.monthlySchedules].sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+  let hourCounter = {};
+  const daysInMonth = getDaysInMonth(state.year, state.month);
+  let availableSlots = 0;
+  
+  for (let d = 2; d <= daysInMonth; d++) {
+    for (let h = CONFIG.START_HOUR; h <= CONFIG.END_HOUR; h++) {
+      for (let hf = 0; hf < 2; hf++) {
+        const checkDate = new Date(state.year, state.month - 1, d);
+        let wd = checkDate.getDay() - 1;
+        if (wd < 0) wd = 6;
+        let isFixed = false;
+        for (const fs of state.fixedSchedules) {
+          for (const t of fs.times) {
+            if (t.day === wd && t.hour === h && t.half === hf) {
+              isFixed = true;
+              break;
+            }
+          }
+          if (isFixed) break;
+        }
+      }
+    }
+  }
+  
+  let totalNeeded = 0;
+  monthlyByPriority.forEach(ms => {
+    totalNeeded += ms.hours * 2;
+  });
+  
+  if (totalNeeded > availableSlots) {
+    const overflow = (totalNeeded - availableSlots) / 2;
+    return overflow;
+  }
+  return 0;
 }
 
 function getCategoryTimeSlot(dayIdx, hour, half) {
@@ -652,9 +793,8 @@ function renderTodoList() {
     html += '<div class="todo-info"><div class="todo-name">' + ms.name + '</div>';
     html += '<div class="todo-hours">' + ms.hours + ' 工时 | ' + (ms.ctdp ? 'CTDP' : '') + '</div></div></div>';
   });
-  list.innerHTML = html || '<div style="color:var(--text-light);text-align:center;padding:20px">暂无月度安排</div>';
+  list.innerHTML = html || '<div style="color:var(--text-light);text-align:center;padding:24px">暂无月度安排</div>';
 }
-
 function updateRemainingHours() {
   const daysInMonth = getDaysInMonth(state.year, state.month);
   let totalCells = 0;
@@ -666,7 +806,8 @@ function updateRemainingHours() {
         const checkDate = new Date(state.year, state.month - 1, d);
         let dayIdx = checkDate.getDay() - 1;
         if (dayIdx < 0) dayIdx = 6;
-        if (getCellSchedule(dayIdx, h, half, d)) {
+        const schedule = getCellSchedule(dayIdx, h, half, d);
+        if (schedule) {
           filledCells++;
         }
       }
@@ -701,7 +842,7 @@ function renderFixedList() {
     html += '<div class="item-info"><div class="item-name">' + fs.name + '</div>';
     html += '<div class="item-meta">' + fs.times.length + ' 个时段</div></div>';
     html += '<div class="item-actions">';
-    html += '<button class="btn btn-secondary" onclick="editFixed(' + idx + ')">编辑</button>';
+    html += '<button class="btn btn-secondary" onclick="openEditFixedModal(' + idx + ')">编辑</button>';
     html += '<button class="btn btn-danger" onclick="deleteFixed(' + idx + ')">删除</button>';
     html += '</div></div>';
   });
@@ -718,7 +859,7 @@ function renderMonthlyList() {
     html += '<div class="item-info"><div class="item-name">' + ms.name + '</div>';
     html += '<div class="item-meta">' + ms.hours + '工时 | ' + getPriorityText(ms.priority) + '</div></div>';
     html += '<div class="item-actions">';
-    html += '<button class="btn btn-secondary" onclick="editMonthly(' + idx + ')">编辑</button>';
+    html += '<button class="btn btn-secondary" onclick="openEditMonthlyModal(' + idx + ')">编辑</button>';
     html += '<button class="btn btn-danger" onclick="deleteMonthly(' + idx + ')">删除</button>';
     html += '</div></div>';
   });
@@ -734,7 +875,7 @@ function renderCategoryList() {
     html += '<div class="item-info"><div class="item-name">' + cat.name + '</div>';
     html += '<div class="item-meta">' + cat.times.length + ' 个时段</div></div>';
     html += '<div class="item-actions">';
-    html += '<button class="btn btn-secondary" onclick="editCategory(' + idx + ')">编辑</button>';
+    html += '<button class="btn btn-secondary" onclick="openEditCategoryModal(' + idx + ')">编辑</button>';
     html += '<button class="btn btn-danger" onclick="deleteCategory(' + idx + ')">删除</button>';
     html += '</div></div>';
   });
@@ -749,28 +890,36 @@ function bindEvents() {
     state.year = parseInt(e.target.value);
     state.week = 1;
     clearMonthData();
-    renderTable();
-    updateRemainingHours();
+    animateTableChange(() => {
+      renderTable();
+      updateRemainingHours();
+    });
   });
   document.getElementById('monthSelect').addEventListener('change', (e) => {
     state.month = parseInt(e.target.value);
     state.week = 1;
     clearMonthData();
-    renderTable();
-    updateRemainingHours();
+    animateTableChange(() => {
+      renderTable();
+      updateRemainingHours();
+    });
   });
   document.getElementById('goTodayBtn').addEventListener('click', goToToday);
   document.getElementById('prevWeekBtn').addEventListener('click', () => {
     if (state.week > 1) {
-      state.week--;
-      renderTable();
+      animateTableChange(() => {
+        state.week--;
+        renderTable();
+      });
     }
   });
   document.getElementById('nextWeekBtn').addEventListener('click', () => {
     const maxWeeks = getMaxWeeks(state.year, state.month);
     if (state.week < maxWeeks) {
-      state.week++;
-      renderTable();
+      animateTableChange(() => {
+        state.week++;
+        renderTable();
+      });
     }
   });
   document.getElementById('scheduleViewBtn').addEventListener('click', () => {
@@ -788,12 +937,10 @@ function bindEvents() {
   });
   document.getElementById('fixedTimeBtn').addEventListener('click', () => {
     currentTimeSelectMode = 'fixed';
-    state.selectedTimes = currentEditItem !== null ? [...state.fixedSchedules[currentEditItem].times] : [];
     openTimeSelectModal();
   });
   document.getElementById('categoryTimeBtn').addEventListener('click', () => {
     currentTimeSelectMode = 'category';
-    state.categoryTimes = [];
     openTimeSelectModal();
   });
   document.getElementById('confirmTimeSelect').addEventListener('click', confirmTimeSelect);
@@ -801,9 +948,11 @@ function bindEvents() {
   document.getElementById('addMonthlyBtn').addEventListener('click', addMonthlySchedule);
   document.getElementById('addCategoryBtn').addEventListener('click', addCategory);
   document.getElementById('refreshBtn').addEventListener('click', () => {
-    renderTable();
-    renderTodoList();
-    updateRemainingHours();
+    animateTableChange(() => {
+      renderTable();
+      renderTodoList();
+      updateRemainingHours();
+    });
   });
   document.getElementById('manualAdjustBtn').addEventListener('click', openManualAdjustModal);
   document.getElementById('exportExcelBtn').addEventListener('click', exportToExcel);
@@ -839,6 +988,8 @@ function clearMonthData() {
   state.monthlySchedules = [];
   state.tempSchedules = {};
   state.cellStatuses = {};
+  state.selectedTimes = [];
+  state.categoryTimes = [];
   renderFixedList();
   renderMonthlyList();
   renderTodoList();
@@ -855,10 +1006,11 @@ function goToToday() {
   let dayOfWeek = firstDay.getDay();
   if (dayOfWeek === 0) dayOfWeek = 7;
   state.week = Math.ceil((day + dayOfWeek - 1) / 7);
-  renderTable();
-  updateRemainingHours();
+  animateTableChange(() => {
+    renderTable();
+    updateRemainingHours();
+  });
 }
-
 function openTimeSelectModal() {
   const modal = document.getElementById('timeSelectModal');
   const thead = document.getElementById('timeSelectHead');
@@ -869,15 +1021,16 @@ function openTimeSelectModal() {
   });
   headerHtml += '</tr>';
   thead.innerHTML = headerHtml;
+  
+  const times = currentTimeSelectMode === 'fixed' ? state.selectedTimes : state.categoryTimes;
+  
   let bodyHtml = '';
   for (let h = CONFIG.START_HOUR; h <= CONFIG.END_HOUR; h++) {
     for (let half = 0; half < 2; half++) {
       const timeStr = String(h).padStart(2, '0') + ':' + (half === 0 ? '00' : '30');
       bodyHtml += '<tr><td class="time-col">' + timeStr + '</td>';
       for (let dayIdx = 0; dayIdx < 7; dayIdx++) {
-        const isSelected = currentTimeSelectMode === 'fixed' ?
-          state.selectedTimes.some(t => t.day === dayIdx && t.hour === h && t.half === half) :
-          state.categoryTimes.some(t => t.day === dayIdx && t.hour === h && t.half === half);
+        const isSelected = times.some(t => t.day === dayIdx && t.hour === h && t.half === half);
         bodyHtml += '<td class="grid-cell' + (isSelected ? ' selected' : '') + '" data-day="' + dayIdx + '" data-hour="' + h + '" data-half="' + half + '"></td>';
       }
       bodyHtml += '</tr>';
@@ -913,6 +1066,7 @@ function closeTimeSelectModal() {
 function confirmTimeSelect() {
   closeTimeSelectModal();
 }
+
 function addFixedSchedule() {
   const name = document.getElementById('fixedName').value.trim();
   const category = document.getElementById('fixedCategory').value;
@@ -924,12 +1078,7 @@ function addFixedSchedule() {
     showAlert('请选择时间');
     return;
   }
-  if (currentEditItem !== null) {
-    state.fixedSchedules[currentEditItem] = { name, category, times: [...state.selectedTimes] };
-    currentEditItem = null;
-  } else {
-    state.fixedSchedules.push({ name, category, times: [...state.selectedTimes] });
-  }
+  state.fixedSchedules.push({ name, category, times: [...state.selectedTimes] });
   document.getElementById('fixedName').value = '';
   state.selectedTimes = [];
   renderFixedList();
@@ -948,15 +1097,16 @@ function addMonthlySchedule() {
     showAlert('请输入安排名称');
     return;
   }
-  if (currentEditItem !== null) {
-    state.monthlySchedules[currentEditItem] = { name, category, priority, hours, ctdp };
-    currentEditItem = null;
-  } else {
-    state.monthlySchedules.push({ name, category, priority, hours, ctdp });
-    if (ctdp && !state.ctdpRecords[name]) {
-      state.ctdpRecords[name] = 0;
-    }
+  state.monthlySchedules.push({ name, category, priority, hours, ctdp });
+  if (ctdp) {
+    state.ctdpRecords[name] = 0;
   }
+  
+  const overflow = checkMonthlyOverflow();
+  if (overflow > 0) {
+    showOverflowAlert(overflow);
+  }
+  
   document.getElementById('monthlyName').value = '';
   document.getElementById('monthlyHours').value = '1';
   document.getElementById('monthlyCTDP').checked = false;
@@ -965,6 +1115,17 @@ function addMonthlySchedule() {
   renderTable();
   updateRemainingHours();
   saveToStorage();
+}
+
+function showOverflowAlert(hours) {
+  showModal('工时溢出提示', 
+    '<p style="text-align:center;padding:20px;font-size:15px">当前月度安排超出本月可用工时 <strong>' + hours.toFixed(1) + '</strong> 小时。<br><br>是否将未完成的部分延伸到下一个月？</p>',
+    '<button class="btn btn-secondary" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="confirmOverflow()">确定延伸</button>');
+}
+
+function confirmOverflow() {
+  closeModal();
+  showAlert('已记录，下月将继续安排剩余工时');
 }
 
 function addCategory() {
@@ -978,12 +1139,7 @@ function addCategory() {
     showAlert('不能使用绿、黄、红色（这些颜色用于状态标记）');
     return;
   }
-  if (currentEditItem !== null) {
-    state.categories[currentEditItem] = { name, color, times: [...state.categoryTimes] };
-    currentEditItem = null;
-  } else {
-    state.categories.push({ name, color, times: [...state.categoryTimes] });
-  }
+  state.categories.push({ name, color, times: [...state.categoryTimes] });
   document.getElementById('categoryName').value = '';
   state.categoryTimes = [];
   renderCategoryList();
@@ -991,13 +1147,149 @@ function addCategory() {
   renderTable();
   saveToStorage();
 }
-
-function editFixed(idx) {
-  const fs = state.fixedSchedules[idx];
-  document.getElementById('fixedName').value = fs.name;
-  document.getElementById('fixedCategory').value = fs.category;
-  state.selectedTimes = [...fs.times];
+function openEditFixedModal(idx) {
   currentEditItem = idx;
+  currentEditType = 'fixed';
+  const fs = state.fixedSchedules[idx];
+  state.selectedTimes = [...fs.times];
+  
+  let catOptions = '<option value="">无分类</option>';
+  state.categories.forEach(cat => {
+    catOptions += '<option value="' + cat.name + '"' + (cat.name === fs.category ? ' selected' : '') + '>' + cat.name + '</option>';
+  });
+  
+  const body = '<div class="form-group"><label class="form-label">安排名</label><input type="text" class="form-input" id="editFixedName" value="' + fs.name + '"></div>' +
+    '<div class="form-group"><label class="form-label">分类</label><select class="form-select" id="editFixedCategory">' + catOptions + '</select></div>' +
+    '<div class="form-group"><button class="btn btn-time" onclick="openTimeSelectFromEdit()" style="width:100%">⏰ 选择时间 (' + fs.times.length + ' 个时段)</button></div>';
+  
+  document.getElementById('editModalTitle').textContent = '编辑硬性安排';
+  document.getElementById('editModalBody').innerHTML = body;
+  document.getElementById('editModalSave').onclick = saveEditFixed;
+  document.getElementById('editModal').classList.add('active');
+}
+
+function openTimeSelectFromEdit() {
+  currentTimeSelectMode = 'fixed';
+  openTimeSelectModal();
+}
+
+function saveEditFixed() {
+  const name = document.getElementById('editFixedName').value.trim();
+  const category = document.getElementById('editFixedCategory').value;
+  if (!name) {
+    showAlert('请输入安排名称');
+    return;
+  }
+  state.fixedSchedules[currentEditItem] = { name, category, times: [...state.selectedTimes] };
+  currentEditItem = null;
+  currentEditType = null;
+  closeEditModal();
+  renderFixedList();
+  renderTable();
+  updateRemainingHours();
+  saveToStorage();
+}
+
+function openEditMonthlyModal(idx) {
+  currentEditItem = idx;
+  currentEditType = 'monthly';
+  const ms = state.monthlySchedules[idx];
+  
+  let catOptions = '<option value="">无分类</option>';
+  state.categories.forEach(cat => {
+    catOptions += '<option value="' + cat.name + '"' + (cat.name === ms.category ? ' selected' : '') + '>' + cat.name + '</option>';
+  });
+  
+  const body = '<div class="form-group"><label class="form-label">安排名</label><input type="text" class="form-input" id="editMonthlyName" value="' + ms.name + '"></div>' +
+    '<div class="form-row"><div class="form-group"><label class="form-label">分类</label><select class="form-select" id="editMonthlyCategory">' + catOptions + '</select></div>' +
+    '<div class="form-group"><label class="form-label">优先度</label><select class="form-select" id="editMonthlyPriority"><option value="high"' + (ms.priority === 'high' ? ' selected' : '') + '>高</option><option value="medium"' + (ms.priority === 'medium' ? ' selected' : '') + '>中</option><option value="low"' + (ms.priority === 'low' ? ' selected' : '') + '>低</option></select></div></div>' +
+    '<div class="form-group"><label class="form-label">预计工时（小时）</label><input type="number" class="form-input" id="editMonthlyHours" value="' + ms.hours + '" min="0.5" step="0.5"></div>' +
+    '<div class="form-group"><label class="checkbox-wrap"><input type="checkbox" id="editMonthlyCTDP"' + (ms.ctdp ? ' checked' : '') + '><span>加入 CTDP 统计</span></label></div>';
+  
+  document.getElementById('editModalTitle').textContent = '编辑月度安排';
+  document.getElementById('editModalBody').innerHTML = body;
+  document.getElementById('editModalSave').onclick = saveEditMonthly;
+  document.getElementById('editModal').classList.add('active');
+}
+
+function saveEditMonthly() {
+  const name = document.getElementById('editMonthlyName').value.trim();
+  const category = document.getElementById('editMonthlyCategory').value;
+  const priority = document.getElementById('editMonthlyPriority').value;
+  const hours = parseFloat(document.getElementById('editMonthlyHours').value) || 1;
+  const ctdp = document.getElementById('editMonthlyCTDP').checked;
+  if (!name) {
+    showAlert('请输入安排名称');
+    return;
+  }
+  const oldName = state.monthlySchedules[currentEditItem].name;
+  state.monthlySchedules[currentEditItem] = { name, category, priority, hours, ctdp };
+  if (ctdp && !state.ctdpRecords[name]) {
+    state.ctdpRecords[name] = state.ctdpRecords[oldName] || 0;
+  }
+  if (oldName !== name && state.ctdpRecords[oldName]) {
+    state.ctdpRecords[name] = state.ctdpRecords[oldName];
+    delete state.ctdpRecords[oldName];
+  }
+  currentEditItem = null;
+  currentEditType = null;
+  closeEditModal();
+  renderMonthlyList();
+  renderTodoList();
+  renderTable();
+  updateRemainingHours();
+  saveToStorage();
+}
+
+function openEditCategoryModal(idx) {
+  currentEditItem = idx;
+  currentEditType = 'category';
+  const cat = state.categories[idx];
+  state.categoryTimes = [...cat.times];
+  
+  const body = '<div class="form-group"><label class="form-label">分类名</label><input type="text" class="form-input" id="editCategoryName" value="' + cat.name + '"></div>' +
+    '<div class="form-group"><label class="form-label">分类颜色</label><div class="color-picker-wrap"><input type="color" id="editCategoryColor" value="' + cat.color + '"><span id="editColorPreview" style="padding:10px 20px;border-radius:10px;color:#fff;background:' + cat.color + ';font-weight:500">预览</span></div></div>' +
+    '<div class="form-group"><button class="btn btn-time" onclick="openCategoryTimeFromEdit()" style="width:100%">⏰ 分类时段 (' + cat.times.length + ' 个时段)</button></div>';
+  
+  document.getElementById('editModalTitle').textContent = '编辑分类';
+  document.getElementById('editModalBody').innerHTML = body;
+  document.getElementById('editCategoryColor').addEventListener('input', (e) => {
+    document.getElementById('editColorPreview').style.background = e.target.value;
+  });
+  document.getElementById('editModalSave').onclick = saveEditCategory;
+  document.getElementById('editModal').classList.add('active');
+}
+
+function openCategoryTimeFromEdit() {
+  currentTimeSelectMode = 'category';
+  openTimeSelectModal();
+}
+
+function saveEditCategory() {
+  const name = document.getElementById('editCategoryName').value.trim();
+  const color = document.getElementById('editCategoryColor').value;
+  if (!name) {
+    showAlert('请输入分类名称');
+    return;
+  }
+  if (CONFIG.RESERVED_COLORS.includes(color)) {
+    showAlert('不能使用绿、黄、红色');
+    return;
+  }
+  state.categories[currentEditItem] = { name, color, times: [...state.categoryTimes] };
+  currentEditItem = null;
+  currentEditType = null;
+  closeEditModal();
+  renderCategoryList();
+  updateCategorySelects();
+  renderTable();
+  saveToStorage();
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').classList.remove('active');
+  currentEditItem = null;
+  currentEditType = null;
 }
 
 function deleteFixed(idx) {
@@ -1008,32 +1300,15 @@ function deleteFixed(idx) {
   saveToStorage();
 }
 
-function editMonthly(idx) {
-  const ms = state.monthlySchedules[idx];
-  document.getElementById('monthlyName').value = ms.name;
-  document.getElementById('monthlyCategory').value = ms.category;
-  document.getElementById('monthlyPriority').value = ms.priority;
-  document.getElementById('monthlyHours').value = ms.hours;
-  document.getElementById('monthlyCTDP').checked = ms.ctdp;
-  currentEditItem = idx;
-}
-
 function deleteMonthly(idx) {
+  const name = state.monthlySchedules[idx].name;
   state.monthlySchedules.splice(idx, 1);
+  delete state.ctdpRecords[name];
   renderMonthlyList();
   renderTodoList();
   renderTable();
   updateRemainingHours();
   saveToStorage();
-}
-
-function editCategory(idx) {
-  const cat = state.categories[idx];
-  document.getElementById('categoryName').value = cat.name;
-  document.getElementById('categoryColor').value = cat.color;
-  document.getElementById('colorPreview').style.background = cat.color;
-  state.categoryTimes = [...cat.times];
-  currentEditItem = idx;
 }
 
 function deleteCategory(idx) {
@@ -1048,7 +1323,6 @@ function closeStatusModal() {
   document.getElementById('statusModal').classList.remove('active');
   currentStatusCell = null;
 }
-
 function setStatus(status) {
   if (currentStatusCell) {
     if (status) {
@@ -1064,22 +1338,42 @@ function setStatus(status) {
 }
 
 function updateCTDP() {
+  const daysInMonth = getDaysInMonth(state.year, state.month);
+  
   state.monthlySchedules.forEach(ms => {
     if (ms.ctdp) {
-      let completed = 0;
+      let completedForThis = 0;
       let hasIncomplete = false;
-      Object.entries(state.cellStatuses).forEach(([key, status]) => {
-        if (status === 'incomplete') hasIncomplete = true;
-        if (status === 'complete') completed++;
-      });
+      
+      for (let d = 2; d <= daysInMonth; d++) {
+        for (let h = CONFIG.START_HOUR; h <= CONFIG.END_HOUR; h++) {
+          for (let hf = 0; hf < 2; hf++) {
+            const checkDate = new Date(state.year, state.month - 1, d);
+            let wd = checkDate.getDay() - 1;
+            if (wd < 0) wd = 6;
+            const schedule = getCellSchedule(wd, h, hf, d);
+            if (schedule && schedule.name === ms.name && schedule.type === 'monthly') {
+              const key = state.year + '-' + state.month + '-' + d + '-' + h + '-' + hf;
+              const status = state.cellStatuses[key];
+              if (status === 'incomplete') {
+                hasIncomplete = true;
+              } else if (status === 'complete') {
+                completedForThis++;
+              }
+            }
+          }
+        }
+      }
+      
       if (hasIncomplete) {
         state.ctdpRecords[ms.name] = 0;
       } else {
-        state.ctdpRecords[ms.name] = completed;
+        state.ctdpRecords[ms.name] = completedForThis;
       }
     }
   });
 }
+
 function openManualAdjustModal() {
   const modal = document.getElementById('manualAdjustModal');
   const thead = document.getElementById('manualAdjustHead');
@@ -1110,7 +1404,7 @@ function openManualAdjustModal() {
           if (schedule) {
             cellClass += ' filled';
             if (schedule.color) cellStyle = 'background:' + schedule.color;
-            cellContent = schedule.name;
+            cellContent = schedule.name + '<button class="delete-btn" onclick="deleteCellSchedule(\\\'' + cellKey + '\\\', event)">×</button>';
           }
           bodyHtml += '<td class="' + cellClass + '" style="' + cellStyle + '" data-key="' + cellKey + '" draggable="true">' + cellContent + '</td>';
         } else {
@@ -1123,8 +1417,12 @@ function openManualAdjustModal() {
   tbody.innerHTML = bodyHtml;
   document.querySelectorAll('#manualAdjustBody .grid-cell').forEach(cell => {
     cell.addEventListener('click', (e) => {
+      if (e.target.classList.contains('delete-btn')) return;
       if (!cell.classList.contains('filled')) {
-        openTempScheduleModal(cell.dataset.key);
+        currentTempKey = cell.dataset.key;
+        document.getElementById('tempScheduleModal').classList.add('active');
+        document.getElementById('tempScheduleName').value = '';
+        document.getElementById('tempScheduleName').focus();
       }
     });
     cell.addEventListener('dragstart', (e) => {
@@ -1163,6 +1461,36 @@ function openManualAdjustModal() {
   modal.classList.add('active');
 }
 
+function deleteCellSchedule(key, e) {
+  e.stopPropagation();
+  const cell = document.querySelector('#manualAdjustBody [data-key="' + key + '"]');
+  if (cell) {
+    cell.innerHTML = '';
+    cell.classList.remove('filled');
+    cell.style.background = '';
+    delete state.tempSchedules[key];
+  }
+}
+
+function closeTempScheduleModal() {
+  document.getElementById('tempScheduleModal').classList.remove('active');
+  currentTempKey = null;
+}
+
+document.getElementById('confirmTempSchedule').addEventListener('click', function() {
+  const name = document.getElementById('tempScheduleName').value.trim();
+  if (name && currentTempKey) {
+    const cell = document.querySelector('#manualAdjustBody [data-key="' + currentTempKey + '"]');
+    if (cell) {
+      cell.innerHTML = name + '<button class="delete-btn" onclick="deleteCellSchedule(\'' + currentTempKey + '\', event)">×</button>';
+      cell.classList.add('filled');
+      cell.style.background = '#999';
+      state.tempSchedules[currentTempKey] = name;
+    }
+  }
+  closeTempScheduleModal();
+});
+
 function closeManualAdjustModal() {
   document.getElementById('manualAdjustModal').classList.remove('active');
 }
@@ -1170,12 +1498,17 @@ function closeManualAdjustModal() {
 function confirmManualAdjust() {
   document.querySelectorAll('#manualAdjustBody .grid-cell').forEach(cell => {
     const key = cell.dataset.key;
-    if (cell.classList.contains('filled') && cell.textContent && !getCellScheduleByKey(key)) {
-      state.tempSchedules[key] = cell.textContent;
+    const textContent = cell.textContent.replace('×', '').trim();
+    if (cell.classList.contains('filled') && textContent && !getCellScheduleByKey(key)) {
+      state.tempSchedules[key] = textContent;
+    } else if (!cell.classList.contains('filled') && state.tempSchedules[key]) {
+      delete state.tempSchedules[key];
     }
   });
   closeManualAdjustModal();
   renderTable();
+  updateRemainingHours();
+  saveToStorage();
 }
 
 function getCellScheduleByKey(key) {
@@ -1197,25 +1530,6 @@ function getCellScheduleByKey(key) {
   }
   return null;
 }
-
-function openTempScheduleModal(key) {
-  showModal('添加临时日程', '<div class="form-group"><label class="form-label">日程名称</label><input type="text" class="form-input" id="tempScheduleName" placeholder="输入名称"></div>',
-    '<button class="btn btn-secondary" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="addTempSchedule(\'' + key + '\')">添加</button>');
-}
-
-function addTempSchedule(key) {
-  const name = document.getElementById('tempScheduleName').value.trim();
-  if (name) {
-    const cell = document.querySelector('#manualAdjustBody [data-key="' + key + '"]');
-    if (cell) {
-      cell.textContent = name;
-      cell.classList.add('filled');
-      cell.style.background = '#999';
-    }
-  }
-  closeModal();
-}
-
 function showModal(title, body, footer) {
   document.getElementById('modalTitle').textContent = title;
   document.getElementById('modalBody').innerHTML = body;
@@ -1228,9 +1542,10 @@ function closeModal() {
 }
 
 function showAlert(msg) {
-  showModal('提示', '<p style="text-align:center;padding:20px">' + msg + '</p>',
+  showModal('提示', '<p style="text-align:center;padding:24px;font-size:15px">' + msg + '</p>',
     '<button class="btn btn-primary" onclick="closeModal()">确定</button>');
 }
+
 function openSaveComboModal(type) {
   const items = type === 'fixed' ? state.fixedSchedules : state.monthlySchedules;
   const typeName = type === 'fixed' ? '硬性' : '月度';
@@ -1239,11 +1554,11 @@ function openSaveComboModal(type) {
     listHtml += '<div class="item-card"><div class="item-name">' + item.name + '</div></div>';
   });
   if (items.length === 0) {
-    listHtml = '<p style="text-align:center;color:var(--text-light)">暂无安排</p>';
+    listHtml = '<p style="text-align:center;color:var(--text-light);padding:20px">暂无安排</p>';
   }
   showModal('保存' + typeName + '组合',
     '<div class="form-group"><label class="form-label">组合名称</label><input type="text" class="form-input" id="comboName" placeholder="输入组合名称"></div>' +
-    '<div style="margin-top:16px"><p style="font-weight:bold;margin-bottom:8px">将保存以下安排：</p>' + listHtml + '</div>',
+    '<div style="margin-top:20px"><p style="font-weight:600;margin-bottom:12px">将保存以下安排：</p>' + listHtml + '</div>',
     '<button class="btn btn-secondary" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="saveCombo(\'' + type + '\')">保存</button>');
 }
 
@@ -1269,11 +1584,11 @@ function openLoadComboModal(type) {
     listHtml += '<div class="combination-item">' +
       '<input type="radio" name="comboSelect" value="' + idx + '">' +
       '<div class="combination-info"><div class="combination-name">' + combo.name + '</div>' +
-      '<div style="font-size:11px;color:var(--text-light)">' + combo.items.length + ' 个安排</div></div>' +
-      '<button class="btn btn-danger" style="padding:4px 8px;font-size:12px" onclick="deleteCombo(\'' + type + '\',' + idx + ')">删除</button></div>';
+      '<div style="font-size:12px;color:var(--text-light)">' + combo.items.length + ' 个安排</div></div>' +
+      '<button class="btn btn-danger" style="padding:6px 12px;font-size:12px" onclick="deleteCombo(\'' + type + '\',' + idx + ')">删除</button></div>';
   });
   if (combos.length === 0) {
-    listHtml = '<p style="text-align:center;color:var(--text-light)">暂无保存的组合</p>';
+    listHtml = '<p style="text-align:center;color:var(--text-light);padding:24px">暂无保存的组合</p>';
   }
   showModal('呼出' + typeName + '组合', listHtml,
     '<button class="btn btn-secondary" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="loadCombo(\'' + type + '\')">呼出</button>');
@@ -1290,9 +1605,21 @@ function loadCombo(type) {
   const items = JSON.parse(JSON.stringify(combos[idx].items));
   if (type === 'fixed') {
     state.fixedSchedules = items;
+    items.forEach(fs => {
+      fs.times.forEach(t => {
+        if (!state.selectedTimes.some(st => st.day === t.day && st.hour === t.hour && st.half === t.half)) {
+          state.selectedTimes.push({...t});
+        }
+      });
+    });
     renderFixedList();
   } else {
     state.monthlySchedules = items;
+    items.forEach(ms => {
+      if (ms.ctdp && !state.ctdpRecords[ms.name]) {
+        state.ctdpRecords[ms.name] = 0;
+      }
+    });
     renderMonthlyList();
     renderTodoList();
   }
@@ -1355,9 +1682,9 @@ function exportToJpg() {
   rows.forEach((row, ri) => {
     let x = 0;
     const cells = row.querySelectorAll('th, td');
-    const cellHeight = ri === 0 ? 40 : 28;
+    const cellHeight = ri === 0 ? 40 : 30;
     cells.forEach((cell, ci) => {
-      const cellWidth = ci === 0 ? 60 : (table.offsetWidth - 60) / 7;
+      const cellWidth = ci === 0 ? 65 : (table.offsetWidth - 65) / 7;
       if (ri === 0) {
         ctx.fillStyle = '#667eea';
         ctx.fillRect(x, y, cellWidth, cellHeight);
@@ -1368,7 +1695,7 @@ function exportToJpg() {
         ctx.fillRect(x, y, cellWidth, cellHeight);
         ctx.fillStyle = cell.classList.contains('filled') ? '#fff' : '#262626';
       }
-      ctx.strokeStyle = '#dbdbdb';
+      ctx.strokeStyle = '#e8e8e8';
       ctx.strokeRect(x, y, cellWidth, cellHeight);
       const text = cell.textContent.replace(/#\d+/, '').trim();
       ctx.fillText(text, x + 4, y + cellHeight / 2 + 4, cellWidth - 8);
@@ -1382,22 +1709,37 @@ function exportToJpg() {
   link.click();
 }
 function renderHistory() {
-  let totalSet = 0;
-  let totalComplete = 0;
-  let weekComplete = 0;
-  let monthComplete = 0;
-  Object.values(state.cellStatuses).forEach(status => {
-    totalSet++;
-    if (status === 'complete') {
-      totalComplete++;
-      monthComplete++;
-      weekComplete++;
+  const daysInMonth = getDaysInMonth(state.year, state.month);
+  let totalCellsWithStatus = 0;
+  let totalCompleteCells = 0;
+  let weekCompleteCells = 0;
+  let monthCompleteCells = 0;
+  
+  const weekDates = getWeekDates(state.year, state.month, state.week);
+  const weekDays = weekDates.filter(d => d).map(d => d.day);
+  
+  for (let d = 1; d <= daysInMonth; d++) {
+    for (let h = CONFIG.START_HOUR; h <= CONFIG.END_HOUR; h++) {
+      for (let hf = 0; hf < 2; hf++) {
+        const key = state.year + '-' + state.month + '-' + d + '-' + h + '-' + hf;
+        if (state.cellStatuses[key]) {
+          totalCellsWithStatus++;
+          if (state.cellStatuses[key] === 'complete') {
+            totalCompleteCells++;
+            monthCompleteCells++;
+            if (weekDays.includes(d)) {
+              weekCompleteCells++;
+            }
+          }
+        }
+      }
     }
-  });
-  const rate = totalSet > 0 ? Math.round(totalComplete / totalSet * 100) : 0;
+  }
+  
+  const rate = totalCellsWithStatus > 0 ? Math.round(totalCompleteCells / totalCellsWithStatus * 100) : 0;
   document.getElementById('totalCompletionRate').textContent = rate + '%';
-  document.getElementById('weeklyCompletedHours').textContent = (weekComplete * 0.5).toFixed(1);
-  document.getElementById('monthlyCompletedHours').textContent = (monthComplete * 0.5).toFixed(1);
+  document.getElementById('weeklyCompletedHours').textContent = (weekCompleteCells * 0.5).toFixed(1);
+  document.getElementById('monthlyCompletedHours').textContent = (monthCompleteCells * 0.5).toFixed(1);
   renderChart('week');
   renderCTDPList();
   renderHistoryTable();
@@ -1412,7 +1754,7 @@ function renderChart(filter) {
   for (let i = 1; i <= daysCount; i++) {
     let dayTotal = 0;
     let dayComplete = 0;
-    const dayNum = filter === 'week' ? getWeekDates(state.year, state.month, state.week)[i - 1]?.day : i;
+    const dayNum = filter === 'week' ? (getWeekDates(state.year, state.month, state.week)[i - 1]?.day) : i;
     if (!dayNum) {
       data.push(null);
       labels.push('-');
@@ -1450,12 +1792,13 @@ function renderCTDPList() {
   let html = '';
   state.monthlySchedules.filter(ms => ms.ctdp).forEach(ms => {
     const count = state.ctdpRecords[ms.name] || 0;
+    const escapedName = ms.name.replace(/'/g, "\\'");
     html += '<div class="ctdp-item">' +
       '<div class="ctdp-name">' + ms.name + '</div>' +
       '<div class="ctdp-count">#' + count + '</div>' +
-      '<button class="btn btn-danger" style="padding:4px 8px" onclick="deleteCTDP(\'' + ms.name + '\')">删除</button></div>';
+      '<button class="btn btn-danger" style="padding:6px 12px" onclick="deleteCTDP(\'' + escapedName + '\')">删除</button></div>';
   });
-  container.innerHTML = html || '<p style="color:var(--text-light);text-align:center">暂无 CTDP 记录</p>';
+  container.innerHTML = html || '<p style="color:var(--text-light);text-align:center;padding:20px">暂无 CTDP 记录</p>';
 }
 
 function deleteCTDP(name) {
@@ -1473,22 +1816,33 @@ function renderHistoryTable() {
   let html = '';
   const allSchedules = [...state.fixedSchedules, ...state.monthlySchedules];
   if (allSchedules.length === 0) {
-    html = '<tr><td colspan="4" style="text-align:center;color:var(--text-light)">暂无历史记录</td></tr>';
+    html = '<tr><td colspan="4" style="text-align:center;color:var(--text-light);padding:24px">暂无历史记录</td></tr>';
   } else {
     allSchedules.forEach(s => {
       let completed = 0;
       let total = 0;
-      Object.entries(state.cellStatuses).forEach(([key, status]) => {
-        total++;
-        if (status === 'complete') completed++;
-      });
+      const daysInMonth = getDaysInMonth(state.year, state.month);
+      for (let d = 1; d <= daysInMonth; d++) {
+        for (let h = CONFIG.START_HOUR; h <= CONFIG.END_HOUR; h++) {
+          for (let hf = 0; hf < 2; hf++) {
+            const checkDate = new Date(state.year, state.month - 1, d);
+            let wd = checkDate.getDay() - 1;
+            if (wd < 0) wd = 6;
+            const schedule = getCellSchedule(wd, h, hf, d);
+            if (schedule && schedule.name === s.name) {
+              total++;
+              const key = state.year + '-' + state.month + '-' + d + '-' + h + '-' + hf;
+              if (state.cellStatuses[key] === 'complete') completed++;
+            }
+          }
+        }
+      }
       const rate = total > 0 ? Math.round(completed / total * 100) + '%' : '-';
-      html += '<tr><td>' + state.year + '/' + state.month + '</td><td>' + s.name + '</td><td>-</td><td>' + rate + '</td></tr>';
+      html += '<tr><td>' + state.year + '/' + state.month + '</td><td>' + s.name + '</td><td>' + (completed > 0 ? '进行中' : '未开始') + '</td><td>' + rate + '</td></tr>';
     });
   }
   tbody.innerHTML = html;
 }
-
 function saveToStorage() {
   const data = {
     fixedSchedules: state.fixedSchedules,
@@ -1497,7 +1851,10 @@ function saveToStorage() {
     fixedCombos: state.fixedCombos,
     monthlyCombos: state.monthlyCombos,
     cellStatuses: state.cellStatuses,
-    ctdpRecords: state.ctdpRecords
+    ctdpRecords: state.ctdpRecords,
+    tempSchedules: state.tempSchedules,
+    selectedTimes: state.selectedTimes,
+    categoryTimes: state.categoryTimes
   };
   localStorage.setItem('plannerData', JSON.stringify(data));
 }
