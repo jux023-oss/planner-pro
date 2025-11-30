@@ -404,6 +404,13 @@ body{font-family:'Microsoft YaHei','微软雅黑',sans-serif;background:linear-g
 </div>
 </div>
 <script>
+const CONFIG = {
+  START_YEAR: 2025,
+  END_YEAR: 2035,
+  START_HOUR: 8,
+  END_HOUR: 21,
+  RESERVED_COLORS: ['#4caf50', '#ff9800', '#f44336']
+};
 const state = {
   year: 2025,
   month: 11,
@@ -441,7 +448,7 @@ function init() {
 function initSelects() {
   const yearSelect = document.getElementById('yearSelect');
   const monthSelect = document.getElementById('monthSelect');
-  for (let y = 2025; y <= 2030; y++) {
+  for (let y = CONFIG.START_YEAR; y <= CONFIG.END_YEAR; y++) {
     const opt = document.createElement('option');
     opt.value = y;
     opt.textContent = y;
@@ -513,7 +520,7 @@ function renderTable() {
   headerHtml += '</tr>';
   thead.innerHTML = headerHtml;
   let bodyHtml = '';
-  for (let h = 8; h <= 21; h++) {
+  for (let h = CONFIG.START_HOUR; h <= CONFIG.END_HOUR; h++) {
     for (let half = 0; half < 2; half++) {
       const timeStr = String(h).padStart(2, '0') + ':' + (half === 0 ? '00' : '30');
       bodyHtml += '<tr><td class="time-col">' + timeStr + '</td>';
@@ -576,7 +583,7 @@ function getCellSchedule(dayIdx, hour, half, dateNum) {
   let hourCounter = {};
   const daysInMonth = getDaysInMonth(state.year, state.month);
   for (let d = 1; d <= daysInMonth; d++) {
-    for (let h = 8; h <= 21; h++) {
+    for (let h = CONFIG.START_HOUR; h <= CONFIG.END_HOUR; h++) {
       for (let hf = 0; hf < 2; hf++) {
         const checkDate = new Date(state.year, state.month - 1, d);
         let wd = checkDate.getDay() - 1;
@@ -653,7 +660,7 @@ function updateRemainingHours() {
   let totalCells = 0;
   let filledCells = 0;
   for (let d = 1; d <= daysInMonth; d++) {
-    for (let h = 8; h <= 21; h++) {
+    for (let h = CONFIG.START_HOUR; h <= CONFIG.END_HOUR; h++) {
       for (let half = 0; half < 2; half++) {
         totalCells++;
         const checkDate = new Date(state.year, state.month - 1, d);
@@ -863,7 +870,7 @@ function openTimeSelectModal() {
   headerHtml += '</tr>';
   thead.innerHTML = headerHtml;
   let bodyHtml = '';
-  for (let h = 8; h <= 21; h++) {
+  for (let h = CONFIG.START_HOUR; h <= CONFIG.END_HOUR; h++) {
     for (let half = 0; half < 2; half++) {
       const timeStr = String(h).padStart(2, '0') + ':' + (half === 0 ? '00' : '30');
       bodyHtml += '<tr><td class="time-col">' + timeStr + '</td>';
@@ -967,7 +974,7 @@ function addCategory() {
     showAlert('请输入分类名称');
     return;
   }
-  if (color === '#4caf50' || color === '#ff9800' || color === '#f44336') {
+  if (CONFIG.RESERVED_COLORS.includes(color)) {
     showAlert('不能使用绿、黄、红色（这些颜色用于状态标记）');
     return;
   }
@@ -1089,7 +1096,7 @@ function openManualAdjustModal() {
   headerHtml += '</tr>';
   thead.innerHTML = headerHtml;
   let bodyHtml = '';
-  for (let h = 8; h <= 21; h++) {
+  for (let h = CONFIG.START_HOUR; h <= CONFIG.END_HOUR; h++) {
     for (let half = 0; half < 2; half++) {
       const timeStr = String(h).padStart(2, '0') + ':' + (half === 0 ? '00' : '30');
       bodyHtml += '<tr><td class="time-col">' + timeStr + '</td>';
@@ -1309,7 +1316,7 @@ function exportToExcel() {
     else csv += ',';
   });
   csv += '\n';
-  for (let h = 8; h <= 21; h++) {
+  for (let h = CONFIG.START_HOUR; h <= CONFIG.END_HOUR; h++) {
     for (let half = 0; half < 2; half++) {
       const timeStr = String(h).padStart(2, '0') + ':' + (half === 0 ? '00' : '30');
       csv += timeStr;
@@ -1411,7 +1418,7 @@ function renderChart(filter) {
       labels.push('-');
       continue;
     }
-    for (let h = 8; h <= 21; h++) {
+    for (let h = CONFIG.START_HOUR; h <= CONFIG.END_HOUR; h++) {
       for (let half = 0; half < 2; half++) {
         const key = state.year + '-' + state.month + '-' + dayNum + '-' + h + '-' + half;
         if (state.cellStatuses[key]) {
@@ -1509,7 +1516,7 @@ function loadFromStorage() {
       renderTodoList();
       updateRemainingHours();
     } catch (e) {
-      console.error('Failed to load saved data');
+      console.error('Failed to load saved data:', e.message);
     }
   }
 }
