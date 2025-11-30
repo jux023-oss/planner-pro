@@ -459,8 +459,7 @@ const state = {
   cellStatuses: {},
   tempSchedules: {},
   ctdpRecords: {},
-  history: [],
-  pendingOverflow: null
+  history: []
 };
 const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
 const priorityOrder = { high: 0, medium: 1, low: 2 };
@@ -470,6 +469,14 @@ let currentEditType = null;
 let currentStatusCell = null;
 let currentTempKey = null;
 let dragSource = null;
+
+// Helper function to escape HTML to prevent XSS
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
 
 function init() {
   initSelects();
@@ -595,9 +602,9 @@ function renderTable() {
             if (schedule.color) {
               cellStyle = 'background:' + schedule.color;
             }
-            cellContent = schedule.name;
+            cellContent = escapeHtml(schedule.name);
             if (schedule.hourMark) {
-              cellContent = '<span class="hour-mark">#' + schedule.hourMark + '</span>' + schedule.name;
+              cellContent = '<span class="hour-mark">#' + schedule.hourMark + '</span>' + escapeHtml(schedule.name);
             }
           } else {
             const catSlot = getCategoryTimeSlot(dayIdx, h, half);
@@ -682,10 +689,13 @@ function getCellSchedule(dayIdx, hour, half, dateNum) {
   }
   const monthlyByPriority = [...state.monthlySchedules].sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
   let hourCounter = {};
+  // Initialize hour counters for all monthly schedules
+  monthlyByPriority.forEach(ms => { hourCounter[ms.name] = 0; });
   const daysInMonth = getDaysInMonth(state.year, state.month);
   const today = new Date();
   const todayNum = (state.year === today.getFullYear() && state.month === today.getMonth() + 1) ? today.getDate() : 0;
   
+  // Monthly schedules start from day 2 (the day after arrangement is created)
   for (let d = 2; d <= daysInMonth; d++) {
     for (let h = CONFIG.START_HOUR; h <= CONFIG.END_HOUR; h++) {
       for (let hf = 0; hf < 2; hf++) {
@@ -732,10 +742,10 @@ function getCellSchedule(dayIdx, hour, half, dateNum) {
 
 function checkMonthlyOverflow() {
   const monthlyByPriority = [...state.monthlySchedules].sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
-  let hourCounter = {};
   const daysInMonth = getDaysInMonth(state.year, state.month);
   let availableSlots = 0;
   
+  // Count available slots (not occupied by fixed schedules) starting from day 2
   for (let d = 2; d <= daysInMonth; d++) {
     for (let h = CONFIG.START_HOUR; h <= CONFIG.END_HOUR; h++) {
       for (let hf = 0; hf < 2; hf++) {
@@ -751,6 +761,9 @@ function checkMonthlyOverflow() {
             }
           }
           if (isFixed) break;
+        }
+        if (!isFixed) {
+          availableSlots++;
         }
       }
     }
@@ -1404,7 +1417,7 @@ function openManualAdjustModal() {
           if (schedule) {
             cellClass += ' filled';
             if (schedule.color) cellStyle = 'background:' + schedule.color;
-            cellContent = schedule.name + '<button class="delete-btn" onclick="deleteCellSchedule(\\\'' + cellKey + '\\\', event)">×</button>';
+            cellContent = escapeHtml(schedule.name) + '<button class="delete-btn" onclick="deleteCellSchedule(\'' + cellKey + '\', event)">×</button>';
           }
           bodyHtml += '<td class="' + cellClass + '" style="' + cellStyle + '" data-key="' + cellKey + '" draggable="true">' + cellContent + '</td>';
         } else {
@@ -1482,7 +1495,7 @@ document.getElementById('confirmTempSchedule').addEventListener('click', functio
   if (name && currentTempKey) {
     const cell = document.querySelector('#manualAdjustBody [data-key="' + currentTempKey + '"]');
     if (cell) {
-      cell.innerHTML = name + '<button class="delete-btn" onclick="deleteCellSchedule(\'' + currentTempKey + '\', event)">×</button>';
+      cell.innerHTML = escapeHtml(name) + '<button class="delete-btn" onclick="deleteCellSchedule(\'' + currentTempKey + '\', event)">×</button>';
       cell.classList.add('filled');
       cell.style.background = '#999';
       state.tempSchedules[currentTempKey] = name;
@@ -1792,9 +1805,9 @@ function renderCTDPList() {
   let html = '';
   state.monthlySchedules.filter(ms => ms.ctdp).forEach(ms => {
     const count = state.ctdpRecords[ms.name] || 0;
-    const escapedName = ms.name.replace(/'/g, "\\'");
+    const escapedName = ms.name.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     html += '<div class="ctdp-item">' +
-      '<div class="ctdp-name">' + ms.name + '</div>' +
+      '<div class="ctdp-name">' + escapeHtml(ms.name) + '</div>' +
       '<div class="ctdp-count">#' + count + '</div>' +
       '<button class="btn btn-danger" style="padding:6px 12px" onclick="deleteCTDP(\'' + escapedName + '\')">删除</button></div>';
   });
