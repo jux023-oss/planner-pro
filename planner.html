@@ -21,7 +21,7 @@ body{font-family:'Microsoft YaHei','微软雅黑',-apple-system,BlinkMacSystemFo
 .time-display{background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);padding:5px 12px;border-radius:8px;font-size:11px;display:flex;align-items:center;gap:5px;font-weight:500}
 .remaining-hours{background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);padding:5px 12px;border-radius:8px;font-weight:600;font-size:11px}
 .btn{padding:5px 12px;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:11px;font-weight:500;transition:all 0.2s;display:inline-flex;align-items:center;justify-content:center;gap:4px;position:relative;overflow:hidden}
-.btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.2)}
 .btn:active{transform:translateY(0)}
 .btn-primary{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff}
 .btn-secondary{background:#fff;color:var(--text);border:1px solid var(--border)}
@@ -105,7 +105,8 @@ body{font-family:'Microsoft YaHei','微软雅黑',-apple-system,BlinkMacSystemFo
 .modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;background:#fafafa}
 .time-select-modal .modal{width:90vw;height:90vh;max-width:none;max-height:none;display:flex;flex-direction:column}
 .time-select-modal .modal-body{flex:1;padding:12px;overflow:hidden;display:flex;flex-direction:column}
-.time-select-modal .modal-body .grid-table{height:100%;table-layout:fixed}
+.time-select-modal .modal-body .grid-table{flex:1;height:100%;table-layout:fixed}
+.time-select-modal .modal-body .grid-container{flex:1;display:flex;flex-direction:column}
 .time-select-modal .grid-table th,.time-select-modal .grid-table td{font-size:11px}
 .history-view{display:none;flex:1;padding:20px;overflow-y:auto}
 .history-view.active{display:block}
@@ -332,6 +333,14 @@ body{font-family:'Microsoft YaHei','微软雅黑',-apple-system,BlinkMacSystemFo
 <h3 class="ctdp-title">🔗 CTDP 记录</h3>
 <div id="ctdpItems"></div>
 </div>
+<div class="ctdp-list" style="margin-top:16px;flex:1;display:flex;flex-direction:column;min-height:0">
+<h3 class="ctdp-title">📜 CTDP 规则</h3>
+<div class="form-group" style="display:flex;gap:8px;margin-bottom:12px">
+<input type="text" class="form-input" id="ctdpRuleInput" placeholder="输入CTDP规则..." style="flex:1">
+<button class="btn btn-primary" onclick="addCTDPRule()">添加</button>
+</div>
+<div id="ctdpRulesList" style="flex:1;overflow-y:auto;max-height:200px"></div>
+</div>
 <div class="history-table">
 <h3 style="padding:20px;font-weight:700">📜 历史计划表</h3>
 <table>
@@ -468,6 +477,7 @@ const state = {
   deletedCells: {},
   manualSwaps: {},
   ctdpRecords: {},
+  ctdpRules: [],
   history: []
 };
 const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
@@ -996,7 +1006,7 @@ function bindEvents() {
     document.getElementById('scheduleViewBtn').classList.remove('active');
     document.getElementById('scheduleView').classList.add('hidden');
     document.getElementById('historyView').classList.add('active');
-    renderHistory();
+    requestAnimationFrame(() => renderHistory());
   });
   document.getElementById('fixedTimeBtn').addEventListener('click', () => {
     currentTimeSelectMode = 'fixed';
@@ -1671,6 +1681,38 @@ function confirmManualAdjust(scope) {
       delete state.deletedCells[key];
       state.tempSchedules[key] = name;
     }
+    
+    for (let d = 1; d <= daysInMonth; d++) {
+      if (weekDays.includes(d)) continue;
+      for (let h = CONFIG.START_HOUR; h <= CONFIG.END_HOUR; h++) {
+        for (let hf = 0; hf < 2; hf++) {
+          const currentDate = new Date(state.year, state.month - 1, d);
+          let currentDayIdx = currentDate.getDay() - 1;
+          if (currentDayIdx < 0) currentDayIdx = 6;
+          
+          const weekDatesForThisDay = dates.find(wd => wd && new Date(state.year, state.month - 1, wd.day).getDay() - 1 === currentDayIdx || (new Date(state.year, state.month - 1, wd?.day).getDay() === 0 && currentDayIdx === 6));
+          if (!weekDatesForThisDay) continue;
+          
+          const weekDay = weekDatesForThisDay.day;
+          const weekKey = state.year + '-' + state.month + '-' + weekDay + '-' + h + '-' + hf;
+          const monthKey = state.year + '-' + state.month + '-' + d + '-' + h + '-' + hf;
+          
+          if (manualAdjustChanges.deleted[weekKey]) {
+            state.deletedCells[monthKey] = true;
+            delete state.tempSchedules[monthKey];
+            delete state.manualSwaps[monthKey];
+          }
+          if (manualAdjustChanges.swaps[weekKey]) {
+            delete state.deletedCells[monthKey];
+            state.manualSwaps[monthKey] = manualAdjustChanges.swaps[weekKey];
+          }
+          if (manualAdjustChanges.temps[weekKey]) {
+            delete state.deletedCells[monthKey];
+            state.tempSchedules[monthKey] = manualAdjustChanges.temps[weekKey];
+          }
+        }
+      }
+    }
   }
   
   closeManualAdjustModal();
@@ -1921,6 +1963,7 @@ function renderHistory() {
   document.getElementById('monthlyCompletedHours').textContent = (monthCompleteCells * 0.5).toFixed(1);
   renderChart('week');
   renderCTDPList();
+  renderCTDPRules();
   renderHistoryTable();
 }
 
@@ -1990,6 +2033,34 @@ function deleteCTDP(name) {
   renderCTDPList();
 }
 
+function addCTDPRule() {
+  const input = document.getElementById('ctdpRuleInput');
+  const rule = input.value.trim();
+  if (!rule) return;
+  state.ctdpRules.push(rule);
+  input.value = '';
+  saveToStorage();
+  renderCTDPRules();
+}
+
+function deleteCTDPRule(idx) {
+  state.ctdpRules.splice(idx, 1);
+  saveToStorage();
+  renderCTDPRules();
+}
+
+function renderCTDPRules() {
+  const container = document.getElementById('ctdpRulesList');
+  if (!container) return;
+  let html = '';
+  state.ctdpRules.forEach((rule, idx) => {
+    html += '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#fafafa;border-radius:6px;margin-bottom:6px;border:1px solid var(--border)">' +
+      '<span style="flex:1;font-size:12px">' + escapeHtml(rule) + '</span>' +
+      '<button class="btn btn-danger" style="padding:4px 8px;font-size:10px" onclick="deleteCTDPRule(' + idx + ')">删除</button></div>';
+  });
+  container.innerHTML = html || '<p style="color:var(--text-light);text-align:center;padding:16px;font-size:12px">暂无规则</p>';
+}
+
 function renderHistoryTable() {
   const tbody = document.getElementById('historyTableBody');
   let html = '';
@@ -2031,6 +2102,7 @@ function saveToStorage() {
     monthlyCombos: state.monthlyCombos,
     cellStatuses: state.cellStatuses,
     ctdpRecords: state.ctdpRecords,
+    ctdpRules: state.ctdpRules,
     tempSchedules: state.tempSchedules,
     deletedCells: state.deletedCells,
     manualSwaps: state.manualSwaps,
