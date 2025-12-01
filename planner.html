@@ -95,7 +95,7 @@ body{font-family:'Microsoft YaHei','微软雅黑',-apple-system,BlinkMacSystemFo
 .nietzsche-quote{position:absolute;bottom:4px;right:10px;font-size:9px;color:var(--text-light);font-style:italic;opacity:0.6}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;visibility:hidden;transition:all 0.2s;backdrop-filter:blur(3px)}
 .modal-overlay.active{opacity:1;visibility:visible}
-.modal{background:var(--card);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.25);max-width:90vw;max-height:90vh;overflow:hidden;transform:scale(0.95) translateY(10px);transition:all 0.2s}
+.modal{background:var(--card);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.25);max-width:90vw;max-height:90vh;overflow:hidden;transform:scale(0.95) translateY(10px);transition:all 0.2s;min-width:480px}
 .modal-overlay.active .modal{transform:scale(1) translateY(0)}
 .modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:#fafafa}
 .modal-title{font-size:15px;font-weight:600}
@@ -104,8 +104,9 @@ body{font-family:'Microsoft YaHei','微软雅黑',-apple-system,BlinkMacSystemFo
 .modal-body{padding:20px;max-height:60vh;overflow-y:auto}
 .modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;background:#fafafa}
 .time-select-modal .modal{width:90vw;height:90vh;max-width:none;max-height:none;display:flex;flex-direction:column}
-.time-select-modal .modal-body{flex:1;padding:12px;overflow:auto}
-.time-select-modal .grid-table th,.time-select-modal .grid-table td{height:28px;font-size:11px}
+.time-select-modal .modal-body{flex:1;padding:12px;overflow:hidden;display:flex;flex-direction:column}
+.time-select-modal .modal-body .grid-table{height:100%;table-layout:fixed}
+.time-select-modal .grid-table th,.time-select-modal .grid-table td{font-size:11px}
 .history-view{display:none;flex:1;padding:20px;overflow-y:auto}
 .history-view.active{display:block}
 .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
@@ -136,7 +137,7 @@ body{font-family:'Microsoft YaHei','微软雅黑',-apple-system,BlinkMacSystemFo
 .color-picker-wrap{display:flex;align-items:center;gap:8px}
 .color-picker-wrap input[type="color"]{width:36px;height:36px;border:none;border-radius:8px;cursor:pointer;padding:0}
 .combination-item{display:flex;align-items:center;gap:12px;padding:12px;background:#fafafa;border-radius:8px;margin-bottom:8px;border:1px solid var(--border)}
-.combination-item input[type="radio"]{width:16px;height:16px;accent-color:var(--primary)}
+.combination-item input[type="radio"],.combination-item input[type="checkbox"]{width:16px;height:16px;accent-color:var(--primary);cursor:pointer}
 .combination-info{flex:1}
 .combination-name{font-weight:500;font-size:12px}
 .schedule-view{display:flex;flex:1;overflow:hidden}
@@ -261,7 +262,7 @@ body{font-family:'Microsoft YaHei','微软雅黑',-apple-system,BlinkMacSystemFo
 <label class="form-label">分类颜色</label>
 <div class="color-picker-wrap">
 <input type="color" id="categoryColor" value="#667eea">
-<span id="colorPreview" style="padding:6px 12px;border-radius:6px;color:#fff;background:#667eea;font-weight:500;font-size:11px">预览</span>
+<span id="colorPreview" style="padding:6px 12px;border-radius:6px;color:#fff;background:#667eea;font-weight:500;font-size:11px;margin-left:8px">颜色预览</span>
 </div>
 </div>
 <div class="form-group">
@@ -407,7 +408,8 @@ body{font-family:'Microsoft YaHei','微软雅黑',-apple-system,BlinkMacSystemFo
 </div>
 <div class="modal-footer">
 <button class="btn btn-secondary" onclick="closeManualAdjustModal()">取消</button>
-<button class="btn btn-primary" onclick="confirmManualAdjust()">✓ 确认</button>
+<button class="btn btn-primary" onclick="confirmManualAdjust('week')">💾 保存到本周</button>
+<button class="btn btn-success" onclick="confirmManualAdjust('month')">💾 保存到本月</button>
 </div>
 </div>
 </div>
@@ -463,6 +465,8 @@ const state = {
   categoryTimes: [],
   cellStatuses: {},
   tempSchedules: {},
+  deletedCells: {},
+  manualSwaps: {},
   ctdpRecords: {},
   history: []
 };
@@ -681,9 +685,20 @@ function buildMergeInfo(dates) {
 }
 function getCellSchedule(dayIdx, hour, half, dateNum) {
   const key = state.year + '-' + state.month + '-' + dateNum + '-' + hour + '-' + half;
+  
+  if (state.deletedCells[key]) {
+    return null;
+  }
+  
   if (state.tempSchedules[key]) {
     return { name: state.tempSchedules[key], color: '#999', type: 'temp' };
   }
+  
+  if (state.manualSwaps[key]) {
+    const swap = state.manualSwaps[key];
+    return { name: swap.name, color: swap.color || '#667eea', type: swap.type || 'swapped', hourMark: swap.hourMark };
+  }
+  
   for (const fs of state.fixedSchedules) {
     for (const t of fs.times) {
       if (t.day === dayIdx && t.hour === hour && t.half === half) {
@@ -704,6 +719,9 @@ function getCellSchedule(dayIdx, hour, half, dateNum) {
   for (let d = 2; d <= daysInMonth; d++) {
     for (let h = CONFIG.START_HOUR; h <= CONFIG.END_HOUR; h++) {
       for (let hf = 0; hf < 2; hf++) {
+        const checkKey = state.year + '-' + state.month + '-' + d + '-' + h + '-' + hf;
+        if (state.deletedCells[checkKey] || state.tempSchedules[checkKey] || state.manualSwaps[checkKey]) continue;
+        
         const checkDate = new Date(state.year, state.month - 1, d);
         let wd = checkDate.getDay() - 1;
         if (wd < 0) wd = 6;
@@ -1076,7 +1094,19 @@ function openTimeSelectModal() {
       bodyHtml += '<tr><td class="time-col">' + timeStr + '</td>';
       for (let dayIdx = 0; dayIdx < 7; dayIdx++) {
         const isSelected = times.some(t => t.day === dayIdx && t.hour === h && t.half === half);
-        bodyHtml += '<td class="grid-cell' + (isSelected ? ' selected' : '') + '" data-day="' + dayIdx + '" data-hour="' + h + '" data-half="' + half + '"></td>';
+        const existingSchedule = getExistingScheduleForSlot(dayIdx, h, half);
+        let cellClass = 'grid-cell';
+        let cellStyle = '';
+        let cellContent = '';
+        if (isSelected) {
+          cellClass += ' selected';
+        }
+        if (existingSchedule && !isSelected) {
+          cellClass += ' filled';
+          cellStyle = 'background:' + (existingSchedule.color || '#667eea') + ';opacity:0.6';
+          cellContent = '<span style="font-size:9px">' + escapeHtml(existingSchedule.name) + '</span>';
+        }
+        bodyHtml += '<td class="' + cellClass + '" style="' + cellStyle + '" data-day="' + dayIdx + '" data-hour="' + h + '" data-half="' + half + '">' + cellContent + '</td>';
       }
       bodyHtml += '</tr>';
     }
@@ -1086,6 +1116,18 @@ function openTimeSelectModal() {
     cell.addEventListener('click', toggleTimeCell);
   });
   modal.classList.add('active');
+}
+
+function getExistingScheduleForSlot(dayIdx, hour, half) {
+  for (const fs of state.fixedSchedules) {
+    for (const t of fs.times) {
+      if (t.day === dayIdx && t.hour === hour && t.half === half) {
+        const cat = state.categories.find(c => c.name === fs.category);
+        return { name: fs.name, color: cat ? cat.color : '#667eea' };
+      }
+    }
+  }
+  return null;
 }
 
 function toggleTimeCell(e) {
@@ -1419,11 +1461,18 @@ function updateCTDP() {
   });
 }
 
+let manualAdjustOriginal = {};
+let manualAdjustChanges = { deleted: {}, swaps: {}, temps: {} };
+
 function openManualAdjustModal() {
   const modal = document.getElementById('manualAdjustModal');
   const thead = document.getElementById('manualAdjustHead');
   const tbody = document.getElementById('manualAdjustBody');
   const dates = getWeekDates(state.year, state.month, state.week);
+  
+  manualAdjustOriginal = {};
+  manualAdjustChanges = { deleted: {}, swaps: {}, temps: {} };
+  
   let headerHtml = '<tr><th class="time-col">时间</th>';
   dates.forEach((d, i) => {
     if (d) {
@@ -1443,15 +1492,20 @@ function openManualAdjustModal() {
         if (d) {
           const cellKey = state.year + '-' + state.month + '-' + d.day + '-' + h + '-' + half;
           const schedule = getCellSchedule(dayIdx, h, half, d.day);
+          
+          if (schedule) {
+            manualAdjustOriginal[cellKey] = { ...schedule };
+          }
+          
           let cellClass = 'grid-cell';
           let cellStyle = '';
           let cellContent = '';
           if (schedule) {
             cellClass += ' filled';
             if (schedule.color) cellStyle = 'background:' + schedule.color;
-            cellContent = escapeHtml(schedule.name) + '<button class="delete-btn" onclick="deleteCellSchedule(\'' + cellKey + '\', event)">×</button>';
+            cellContent = escapeHtml(schedule.name) + '<button class="delete-btn" onclick="markCellDeleted(\'' + cellKey + '\', event)">×</button>';
           }
-          bodyHtml += '<td class="' + cellClass + '" style="' + cellStyle + '" data-key="' + cellKey + '" draggable="true">' + cellContent + '</td>';
+          bodyHtml += '<td class="' + cellClass + '" style="' + cellStyle + '" data-key="' + cellKey + '" data-original="' + (schedule ? escapeHtml(schedule.name) : '') + '" data-color="' + (schedule ? schedule.color : '') + '" data-type="' + (schedule ? schedule.type : '') + '" draggable="true">' + cellContent + '</td>';
         } else {
           bodyHtml += '<td style="background:#eee"></td>';
         }
@@ -1481,39 +1535,69 @@ function openManualAdjustModal() {
     cell.addEventListener('drop', (e) => {
       e.preventDefault();
       if (dragSource && dragSource !== cell) {
-        const temp = dragSource.innerHTML;
-        const tempClass = dragSource.classList.contains('filled');
-        const tempStyle = dragSource.style.background;
-        dragSource.innerHTML = cell.innerHTML;
-        if (cell.classList.contains('filled')) {
-          dragSource.classList.add('filled');
-          dragSource.style.background = cell.style.background;
-        } else {
-          dragSource.classList.remove('filled');
-          dragSource.style.background = '';
-        }
-        cell.innerHTML = temp;
-        if (tempClass) {
-          cell.classList.add('filled');
-          cell.style.background = tempStyle;
-        } else {
-          cell.classList.remove('filled');
-          cell.style.background = '';
-        }
+        swapCells(dragSource, cell);
       }
     });
   });
   modal.classList.add('active');
 }
 
-function deleteCellSchedule(key, e) {
+function swapCells(source, target) {
+  const sourceKey = source.dataset.key;
+  const targetKey = target.dataset.key;
+  
+  const sourceName = source.textContent.replace('×', '').trim();
+  const sourceColor = source.style.background;
+  const sourceIsFilled = source.classList.contains('filled');
+  const sourceType = source.dataset.type;
+  
+  const targetName = target.textContent.replace('×', '').trim();
+  const targetColor = target.style.background;
+  const targetIsFilled = target.classList.contains('filled');
+  const targetType = target.dataset.type;
+  
+  if (targetIsFilled) {
+    source.innerHTML = escapeHtml(targetName) + '<button class="delete-btn" onclick="markCellDeleted(\'' + sourceKey + '\', event)">×</button>';
+    source.style.background = targetColor;
+    source.classList.add('filled');
+    source.dataset.type = targetType;
+    manualAdjustChanges.swaps[sourceKey] = { name: targetName, color: targetColor, type: targetType };
+  } else {
+    source.innerHTML = '';
+    source.style.background = '';
+    source.classList.remove('filled');
+    source.dataset.type = '';
+    manualAdjustChanges.deleted[sourceKey] = true;
+    delete manualAdjustChanges.swaps[sourceKey];
+  }
+  
+  if (sourceIsFilled) {
+    target.innerHTML = escapeHtml(sourceName) + '<button class="delete-btn" onclick="markCellDeleted(\'' + targetKey + '\', event)">×</button>';
+    target.style.background = sourceColor;
+    target.classList.add('filled');
+    target.dataset.type = sourceType;
+    manualAdjustChanges.swaps[targetKey] = { name: sourceName, color: sourceColor, type: sourceType };
+  } else {
+    target.innerHTML = '';
+    target.style.background = '';
+    target.classList.remove('filled');
+    target.dataset.type = '';
+    manualAdjustChanges.deleted[targetKey] = true;
+    delete manualAdjustChanges.swaps[targetKey];
+  }
+}
+
+function markCellDeleted(key, e) {
   e.stopPropagation();
   const cell = document.querySelector('#manualAdjustBody [data-key="' + key + '"]');
   if (cell) {
     cell.innerHTML = '';
     cell.classList.remove('filled');
     cell.style.background = '';
-    delete state.tempSchedules[key];
+    cell.dataset.type = '';
+    manualAdjustChanges.deleted[key] = true;
+    delete manualAdjustChanges.swaps[key];
+    delete manualAdjustChanges.temps[key];
   }
 }
 
@@ -1527,10 +1611,12 @@ document.getElementById('confirmTempSchedule').addEventListener('click', functio
   if (name && currentTempKey) {
     const cell = document.querySelector('#manualAdjustBody [data-key="' + currentTempKey + '"]');
     if (cell) {
-      cell.innerHTML = escapeHtml(name) + '<button class="delete-btn" onclick="deleteCellSchedule(\'' + currentTempKey + '\', event)">×</button>';
+      cell.innerHTML = escapeHtml(name) + '<button class="delete-btn" onclick="markCellDeleted(\'' + currentTempKey + '\', event)">×</button>';
       cell.classList.add('filled');
       cell.style.background = '#999';
-      state.tempSchedules[currentTempKey] = name;
+      cell.dataset.type = 'temp';
+      manualAdjustChanges.temps[currentTempKey] = name;
+      delete manualAdjustChanges.deleted[currentTempKey];
     }
   }
   closeTempScheduleModal();
@@ -1540,16 +1626,53 @@ function closeManualAdjustModal() {
   document.getElementById('manualAdjustModal').classList.remove('active');
 }
 
-function confirmManualAdjust() {
-  document.querySelectorAll('#manualAdjustBody .grid-cell').forEach(cell => {
-    const key = cell.dataset.key;
-    const textContent = cell.textContent.replace('×', '').trim();
-    if (cell.classList.contains('filled') && textContent && !getCellScheduleByKey(key)) {
-      state.tempSchedules[key] = textContent;
-    } else if (!cell.classList.contains('filled') && state.tempSchedules[key]) {
-      delete state.tempSchedules[key];
+function confirmManualAdjust(scope) {
+  const dates = getWeekDates(state.year, state.month, state.week);
+  const weekDays = dates.filter(d => d).map(d => d.day);
+  const daysInMonth = getDaysInMonth(state.year, state.month);
+  
+  if (scope === 'week') {
+    for (const key of Object.keys(manualAdjustChanges.deleted)) {
+      const parts = key.split('-');
+      const day = parseInt(parts[2]);
+      if (weekDays.includes(day)) {
+        state.deletedCells[key] = true;
+        delete state.tempSchedules[key];
+        delete state.manualSwaps[key];
+      }
     }
-  });
+    for (const [key, swap] of Object.entries(manualAdjustChanges.swaps)) {
+      const parts = key.split('-');
+      const day = parseInt(parts[2]);
+      if (weekDays.includes(day)) {
+        delete state.deletedCells[key];
+        state.manualSwaps[key] = swap;
+      }
+    }
+    for (const [key, name] of Object.entries(manualAdjustChanges.temps)) {
+      const parts = key.split('-');
+      const day = parseInt(parts[2]);
+      if (weekDays.includes(day)) {
+        delete state.deletedCells[key];
+        state.tempSchedules[key] = name;
+      }
+    }
+  } else {
+    for (const key of Object.keys(manualAdjustChanges.deleted)) {
+      state.deletedCells[key] = true;
+      delete state.tempSchedules[key];
+      delete state.manualSwaps[key];
+    }
+    for (const [key, swap] of Object.entries(manualAdjustChanges.swaps)) {
+      delete state.deletedCells[key];
+      state.manualSwaps[key] = swap;
+    }
+    for (const [key, name] of Object.entries(manualAdjustChanges.temps)) {
+      delete state.deletedCells[key];
+      state.tempSchedules[key] = name;
+    }
+  }
+  
   closeManualAdjustModal();
   renderTable();
   updateRemainingHours();
@@ -1595,15 +1718,15 @@ function openSaveComboModal(type) {
   const items = type === 'fixed' ? state.fixedSchedules : state.monthlySchedules;
   const typeName = type === 'fixed' ? '硬性' : '月度';
   let listHtml = '';
-  items.forEach(item => {
-    listHtml += '<div class="item-card"><div class="item-name">' + item.name + '</div></div>';
+  items.forEach((item, idx) => {
+    listHtml += '<div class="combination-item"><input type="checkbox" id="saveItem' + idx + '" checked><label for="saveItem' + idx + '" style="flex:1;cursor:pointer"><div class="item-name">' + escapeHtml(item.name) + '</div></label></div>';
   });
   if (items.length === 0) {
     listHtml = '<p style="text-align:center;color:var(--text-light);padding:20px">暂无安排</p>';
   }
   showModal('保存' + typeName + '组合',
     '<div class="form-group"><label class="form-label">组合名称</label><input type="text" class="form-input" id="comboName" placeholder="输入组合名称"></div>' +
-    '<div style="margin-top:20px"><p style="font-weight:600;margin-bottom:12px">将保存以下安排：</p>' + listHtml + '</div>',
+    '<div style="margin-top:20px"><p style="font-weight:600;margin-bottom:12px">选择要保存的安排：</p>' + listHtml + '</div>',
     '<button class="btn btn-secondary" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="saveCombo(\'' + type + '\')">保存</button>');
 }
 
@@ -1613,9 +1736,20 @@ function saveCombo(type) {
     showAlert('请输入组合名称');
     return;
   }
-  const items = type === 'fixed' ? state.fixedSchedules : state.monthlySchedules;
+  const allItems = type === 'fixed' ? state.fixedSchedules : state.monthlySchedules;
+  const selectedItems = [];
+  allItems.forEach((item, idx) => {
+    const checkbox = document.getElementById('saveItem' + idx);
+    if (checkbox && checkbox.checked) {
+      selectedItems.push(JSON.parse(JSON.stringify(item)));
+    }
+  });
+  if (selectedItems.length === 0) {
+    showAlert('请至少选择一个安排');
+    return;
+  }
   const combos = type === 'fixed' ? state.fixedCombos : state.monthlyCombos;
-  combos.push({ name, items: JSON.parse(JSON.stringify(items)) });
+  combos.push({ name, items: selectedItems });
   saveToStorage();
   closeModal();
   showAlert('保存成功');
@@ -1898,6 +2032,8 @@ function saveToStorage() {
     cellStatuses: state.cellStatuses,
     ctdpRecords: state.ctdpRecords,
     tempSchedules: state.tempSchedules,
+    deletedCells: state.deletedCells,
+    manualSwaps: state.manualSwaps,
     selectedTimes: state.selectedTimes,
     categoryTimes: state.categoryTimes
   };
