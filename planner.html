@@ -104,9 +104,11 @@ body{font-family:'Microsoft YaHei','微软雅黑',-apple-system,BlinkMacSystemFo
 .modal-body{padding:20px;max-height:60vh;overflow-y:auto}
 .modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;background:#fafafa}
 .time-select-modal .modal{width:90vw;height:90vh;max-width:none;max-height:none;display:flex;flex-direction:column}
-.time-select-modal .modal-body{flex:1;padding:12px;overflow:hidden;display:flex;flex-direction:column}
-.time-select-modal .modal-body .grid-table{flex:1;height:100%;table-layout:fixed}
-.time-select-modal .modal-body .grid-container{flex:1;display:flex;flex-direction:column}
+.time-select-modal .modal-body{flex:1;padding:12px;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+.time-select-modal .modal-body .grid-container{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.time-select-modal .modal-body .grid-table{width:100%;height:100%;table-layout:fixed;flex:1}
+.time-select-modal .modal-body .grid-table tbody{height:100%}
+.time-select-modal .modal-body .grid-table td{height:calc((90vh - 140px) / 28)}
 .time-select-modal .grid-table th,.time-select-modal .grid-table td{font-size:11px}
 .history-view{display:none;flex:1;padding:20px;overflow-y:auto}
 .history-view.active{display:block}
@@ -1002,11 +1004,13 @@ function bindEvents() {
     document.getElementById('historyView').classList.remove('active');
   });
   document.getElementById('historyViewBtn').addEventListener('click', () => {
-    document.getElementById('historyViewBtn').classList.add('active');
-    document.getElementById('scheduleViewBtn').classList.remove('active');
-    document.getElementById('scheduleView').classList.add('hidden');
-    document.getElementById('historyView').classList.add('active');
-    requestAnimationFrame(() => renderHistory());
+    requestAnimationFrame(() => {
+      document.getElementById('historyViewBtn').classList.add('active');
+      document.getElementById('scheduleViewBtn').classList.remove('active');
+      document.getElementById('scheduleView').classList.add('hidden');
+      document.getElementById('historyView').classList.add('active');
+      renderHistory();
+    });
   });
   document.getElementById('fixedTimeBtn').addEventListener('click', () => {
     currentTimeSelectMode = 'fixed';
