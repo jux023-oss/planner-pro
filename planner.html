@@ -1690,7 +1690,13 @@ function confirmManualAdjust(scope) {
           let currentDayIdx = currentDate.getDay() - 1;
           if (currentDayIdx < 0) currentDayIdx = 6;
           
-          const weekDatesForThisDay = dates.find(wd => wd && new Date(state.year, state.month - 1, wd.day).getDay() - 1 === currentDayIdx || (new Date(state.year, state.month - 1, wd?.day).getDay() === 0 && currentDayIdx === 6));
+          const weekDatesForThisDay = dates.find(wd => {
+            if (!wd) return false;
+            const wdDate = new Date(state.year, state.month - 1, wd.day);
+            let wdIdx = wdDate.getDay() - 1;
+            if (wdIdx < 0) wdIdx = 6;
+            return wdIdx === currentDayIdx;
+          });
           if (!weekDatesForThisDay) continue;
           
           const weekDay = weekDatesForThisDay.day;
