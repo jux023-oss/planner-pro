@@ -104,9 +104,9 @@ body{font-family:'Microsoft YaHei','微软雅黑',-apple-system,BlinkMacSystemFo
 .modal-body{padding:20px;max-height:60vh;overflow-y:auto}
 .modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;background:#fafafa}
 .time-select-modal .modal{width:90vw;height:90vh;max-width:none;max-height:none;display:flex;flex-direction:column}
-.time-select-modal .modal-body{flex:1;padding:12px;overflow:hidden;display:flex;flex-direction:column;min-height:0}
-.time-select-modal .modal-body .grid-table{width:100%;table-layout:fixed;border-collapse:collapse}
-.time-select-modal .modal-body .grid-table td,.time-select-modal .modal-body .grid-table th{height:calc((90vh - 160px) / 29)}
+.time-select-modal .modal-body{flex:1;padding:8px;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+.time-select-modal .modal-body .grid-table{width:100%;table-layout:fixed;border-collapse:collapse;height:100%}
+.time-select-modal .modal-body .grid-table td,.time-select-modal .modal-body .grid-table th{height:calc((90vh - 120px) / 29);padding:1px}
 .time-select-modal .grid-table th,.time-select-modal .grid-table td{font-size:11px}
 .grid-cell.today-column{background:rgba(102,126,234,0.08)}
 .history-view{display:none;flex:1;padding:20px;overflow-y:auto}
@@ -1095,6 +1095,9 @@ function bindEvents() {
   document.getElementById('addMonthlyBtn').addEventListener('click', addMonthlySchedule);
   document.getElementById('addCategoryBtn').addEventListener('click', addCategory);
   document.getElementById('refreshBtn').addEventListener('click', () => {
+    state.deletedCells = {};
+    state.manualSwaps = {};
+    saveState();
     animateTableChange(() => {
       renderTable();
       renderTodoList();
