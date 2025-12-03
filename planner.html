@@ -105,11 +105,10 @@ body{font-family:'Microsoft YaHei','微软雅黑',-apple-system,BlinkMacSystemFo
 .modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;background:#fafafa}
 .time-select-modal .modal{width:90vw;height:90vh;max-width:none;max-height:none;display:flex;flex-direction:column}
 .time-select-modal .modal-body{flex:1;padding:12px;overflow:hidden;display:flex;flex-direction:column;min-height:0}
-.time-select-modal .modal-body .grid-container{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden}
-.time-select-modal .modal-body .grid-table{width:100%;height:100%;table-layout:fixed;flex:1}
-.time-select-modal .modal-body .grid-table tbody{height:100%}
-.time-select-modal .modal-body .grid-table td{height:calc((90vh - 140px) / 28)}
+.time-select-modal .modal-body .grid-table{width:100%;table-layout:fixed;border-collapse:collapse}
+.time-select-modal .modal-body .grid-table td,.time-select-modal .modal-body .grid-table th{height:calc((90vh - 160px) / 29)}
 .time-select-modal .grid-table th,.time-select-modal .grid-table td{font-size:11px}
+.grid-cell.today-column{background:rgba(102,126,234,0.08)}
 .history-view{display:none;flex:1;padding:20px;overflow-y:auto}
 .history-view.active{display:block}
 .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
@@ -248,6 +247,9 @@ body{font-family:'Microsoft YaHei','微软雅黑',-apple-system,BlinkMacSystemFo
 <span>加入 CTDP 统计</span>
 </label>
 </div>
+<div class="form-group">
+<button class="btn btn-time" id="monthlyTimeBtn" style="width:100%">⏰ 月度时段</button>
+</div>
 <button class="btn btn-primary" id="addMonthlyBtn" style="width:100%">✓ 确定</button>
 <div class="item-list" id="monthlyList"></div>
 <div class="btn-group">
@@ -278,9 +280,11 @@ body{font-family:'Microsoft YaHei','微软雅黑',-apple-system,BlinkMacSystemFo
 <main class="table-area">
 <div class="table-header">
 <div class="week-nav">
+<button class="btn btn-secondary" id="prevMonthBtn">◀◀ 上月</button>
 <button class="btn btn-secondary" id="prevWeekBtn">◀ 上一周</button>
 <h2 class="week-title" id="weekTitle">11月 第1周</h2>
 <button class="btn btn-secondary" id="nextWeekBtn">下一周 ▶</button>
+<button class="btn btn-secondary" id="nextMonthBtn">下月 ▶▶</button>
 </div>
 <div class="table-actions">
 <button class="btn btn-secondary" id="manualAdjustBtn">✏️ 手动调整</button>
@@ -424,7 +428,7 @@ body{font-family:'Microsoft YaHei','微软雅黑',-apple-system,BlinkMacSystemFo
 </div>
 </div>
 </div>
-<div class="modal-overlay" id="editModal" style="z-index:1002">
+<div class="modal-overlay" id="editModal" style="z-index:999">
 <div class="modal" style="width:450px">
 <div class="modal-header">
 <h3 class="modal-title" id="editModalTitle">编辑安排</h3>
@@ -474,6 +478,7 @@ const state = {
   monthlyCombos: [],
   selectedTimes: [],
   categoryTimes: [],
+  monthlyTimes: [],
   cellStatuses: {},
   tempSchedules: {},
   deletedCells: {},
@@ -582,11 +587,19 @@ function renderTable() {
   const tbody = document.getElementById('tableBody');
   const dates = getWeekDates(state.year, state.month, state.week);
   document.getElementById('weekTitle').textContent = state.month + '月 第' + state.week + '周';
+  
+  const now = new Date();
+  const todayYear = now.getFullYear();
+  const todayMonth = now.getMonth() + 1;
+  const todayDate = now.getDate();
+  
   let headerHtml = '<tr><th class="time-col">时间</th>';
   for (let i = 0; i < dates.length; i++) {
     const d = dates[i];
     if (d) {
-      headerHtml += '<th>' + days[i] + '<br>' + String(state.month).padStart(2, '0') + '/' + String(d.day).padStart(2, '0') + '</th>';
+      const isToday = (state.year === todayYear && state.month === todayMonth && d.day === todayDate);
+      const todayStyle = isToday ? 'background:linear-gradient(135deg,#43a047,#66bb6a)' : '';
+      headerHtml += '<th style="' + todayStyle + '">' + days[i] + '<br>' + String(state.month).padStart(2, '0') + '/' + String(d.day).padStart(2, '0') + (isToday ? ' ★' : '') + '</th>';
     } else {
       headerHtml += '<th style="background:#ccc"></th>';
     }
@@ -618,6 +631,9 @@ function renderTable() {
           let cellContent = '';
           let rowspan = info ? info.rowspan : 1;
           
+          const isToday = (state.year === todayYear && state.month === todayMonth && d.day === todayDate);
+          if (isToday && !schedule) cellClass += ' today-column';
+          
           if (schedule) {
             cellClass += ' filled';
             if (schedule.color) {
@@ -625,7 +641,12 @@ function renderTable() {
             }
             cellContent = escapeHtml(schedule.name);
             if (schedule.hourMark) {
-              cellContent = '<span class="hour-mark">#' + schedule.hourMark + '</span>' + escapeHtml(schedule.name);
+              if (rowspan > 1 && schedule.type === 'monthly') {
+                const endMark = schedule.hourMark + rowspan - 1;
+                cellContent = '<span class="hour-mark">#' + schedule.hourMark + '~#' + endMark + '</span>' + escapeHtml(schedule.name);
+              } else {
+                cellContent = '<span class="hour-mark">#' + schedule.hourMark + '</span>' + escapeHtml(schedule.name);
+              }
             }
           } else {
             const catSlot = getCategoryTimeSlot(dayIdx, h, half);
@@ -753,14 +774,26 @@ function getCellSchedule(dayIdx, hour, half, dateNum) {
           if (hourCounter[ms.name] < neededHalfHours) {
             const cat = state.categories.find(c => c.name === ms.category);
             const catTimes = cat ? cat.times : [];
-            let inCatTime = catTimes.length === 0;
-            for (const ct of catTimes) {
-              if (ct.day === wd && ct.hour === h && ct.half === hf) {
-                inCatTime = true;
-                break;
+            const monthlyTimes = ms.times || [];
+            let inTime = false;
+            if (monthlyTimes.length > 0) {
+              for (const mt of monthlyTimes) {
+                if (mt.day === wd && mt.hour === h && mt.half === hf) {
+                  inTime = true;
+                  break;
+                }
               }
+            } else if (catTimes.length > 0) {
+              for (const ct of catTimes) {
+                if (ct.day === wd && ct.hour === h && ct.half === hf) {
+                  inTime = true;
+                  break;
+                }
+              }
+            } else {
+              inTime = true;
             }
-            if (inCatTime) {
+            if (inTime) {
               hourCounter[ms.name]++;
               if (d === dateNum && h === hour && hf === half && wd === dayIdx) {
                 return { name: ms.name, color: cat ? cat.color : '#764ba2', type: 'monthly', hourMark: hourCounter[ms.name] };
@@ -929,10 +962,11 @@ function renderMonthlyList() {
   let html = '';
   state.monthlySchedules.forEach((ms, idx) => {
     const cat = state.categories.find(c => c.name === ms.category);
+    const timesCount = (ms.times && ms.times.length) || 0;
     html += '<div class="item-card">';
     if (cat) html += '<div class="color-dot" style="background:' + cat.color + '"></div>';
     html += '<div class="item-info"><div class="item-name">' + ms.name + '</div>';
-    html += '<div class="item-meta">' + ms.hours + '工时 | ' + getPriorityText(ms.priority) + '</div></div>';
+    html += '<div class="item-meta">' + ms.hours + '工时 | ' + getPriorityText(ms.priority) + (timesCount > 0 ? ' | ' + timesCount + '时段' : '') + '</div></div>';
     html += '<div class="item-actions">';
     html += '<button class="btn btn-secondary" onclick="openEditMonthlyModal(' + idx + ')">编辑</button>';
     html += '<button class="btn btn-danger" onclick="deleteMonthly(' + idx + ')">删除</button>';
@@ -997,6 +1031,38 @@ function bindEvents() {
       });
     }
   });
+  document.getElementById('prevMonthBtn').addEventListener('click', () => {
+    animateTableChange(() => {
+      if (state.month > 1) {
+        state.month--;
+      } else {
+        state.month = 12;
+        state.year--;
+      }
+      state.week = 1;
+      document.getElementById('yearSelect').value = state.year;
+      document.getElementById('monthSelect').value = state.month;
+      clearMonthData();
+      renderTable();
+      updateRemainingHours();
+    });
+  });
+  document.getElementById('nextMonthBtn').addEventListener('click', () => {
+    animateTableChange(() => {
+      if (state.month < 12) {
+        state.month++;
+      } else {
+        state.month = 1;
+        state.year++;
+      }
+      state.week = 1;
+      document.getElementById('yearSelect').value = state.year;
+      document.getElementById('monthSelect').value = state.month;
+      clearMonthData();
+      renderTable();
+      updateRemainingHours();
+    });
+  });
   document.getElementById('scheduleViewBtn').addEventListener('click', () => {
     document.getElementById('scheduleViewBtn').classList.add('active');
     document.getElementById('historyViewBtn').classList.remove('active');
@@ -1018,6 +1084,10 @@ function bindEvents() {
   });
   document.getElementById('categoryTimeBtn').addEventListener('click', () => {
     currentTimeSelectMode = 'category';
+    openTimeSelectModal();
+  });
+  document.getElementById('monthlyTimeBtn').addEventListener('click', () => {
+    currentTimeSelectMode = 'monthly';
     openTimeSelectModal();
   });
   document.getElementById('confirmTimeSelect').addEventListener('click', confirmTimeSelect);
@@ -1099,7 +1169,14 @@ function openTimeSelectModal() {
   headerHtml += '</tr>';
   thead.innerHTML = headerHtml;
   
-  const times = currentTimeSelectMode === 'fixed' ? state.selectedTimes : state.categoryTimes;
+  let times;
+  if (currentTimeSelectMode === 'fixed') {
+    times = state.selectedTimes;
+  } else if (currentTimeSelectMode === 'category') {
+    times = state.categoryTimes;
+  } else {
+    times = state.monthlyTimes;
+  }
   
   let bodyHtml = '';
   for (let h = CONFIG.START_HOUR; h <= CONFIG.END_HOUR; h++) {
@@ -1149,7 +1226,14 @@ function toggleTimeCell(e) {
   const day = parseInt(cell.dataset.day);
   const hour = parseInt(cell.dataset.hour);
   const half = parseInt(cell.dataset.half);
-  const times = currentTimeSelectMode === 'fixed' ? state.selectedTimes : state.categoryTimes;
+  let times;
+  if (currentTimeSelectMode === 'fixed') {
+    times = state.selectedTimes;
+  } else if (currentTimeSelectMode === 'category') {
+    times = state.categoryTimes;
+  } else {
+    times = state.monthlyTimes;
+  }
   const idx = times.findIndex(t => t.day === day && t.hour === hour && t.half === half);
   if (idx >= 0) {
     times.splice(idx, 1);
@@ -1198,7 +1282,7 @@ function addMonthlySchedule() {
     showAlert('请输入安排名称');
     return;
   }
-  state.monthlySchedules.push({ name, category, priority, hours, ctdp });
+  state.monthlySchedules.push({ name, category, priority, hours, ctdp, times: [...state.monthlyTimes] });
   if (ctdp) {
     state.ctdpRecords[name] = 0;
   }
@@ -1211,6 +1295,7 @@ function addMonthlySchedule() {
   document.getElementById('monthlyName').value = '';
   document.getElementById('monthlyHours').value = '1';
   document.getElementById('monthlyCTDP').checked = false;
+  state.monthlyTimes = [];
   renderMonthlyList();
   renderTodoList();
   renderTable();
@@ -1295,22 +1380,30 @@ function openEditMonthlyModal(idx) {
   currentEditItem = idx;
   currentEditType = 'monthly';
   const ms = state.monthlySchedules[idx];
+  state.monthlyTimes = ms.times ? [...ms.times] : [];
   
   let catOptions = '<option value="">无分类</option>';
   state.categories.forEach(cat => {
     catOptions += '<option value="' + cat.name + '"' + (cat.name === ms.category ? ' selected' : '') + '>' + cat.name + '</option>';
   });
   
+  const timesCount = (ms.times && ms.times.length) || 0;
   const body = '<div class="form-group"><label class="form-label">安排名</label><input type="text" class="form-input" id="editMonthlyName" value="' + ms.name + '"></div>' +
     '<div class="form-row"><div class="form-group"><label class="form-label">分类</label><select class="form-select" id="editMonthlyCategory">' + catOptions + '</select></div>' +
     '<div class="form-group"><label class="form-label">优先度</label><select class="form-select" id="editMonthlyPriority"><option value="high"' + (ms.priority === 'high' ? ' selected' : '') + '>高</option><option value="medium"' + (ms.priority === 'medium' ? ' selected' : '') + '>中</option><option value="low"' + (ms.priority === 'low' ? ' selected' : '') + '>低</option></select></div></div>' +
     '<div class="form-group"><label class="form-label">预计工时（小时）</label><input type="number" class="form-input" id="editMonthlyHours" value="' + ms.hours + '" min="0.5" step="0.5"></div>' +
-    '<div class="form-group"><label class="checkbox-wrap"><input type="checkbox" id="editMonthlyCTDP"' + (ms.ctdp ? ' checked' : '') + '><span>加入 CTDP 统计</span></label></div>';
+    '<div class="form-group"><label class="checkbox-wrap"><input type="checkbox" id="editMonthlyCTDP"' + (ms.ctdp ? ' checked' : '') + '><span>加入 CTDP 统计</span></label></div>' +
+    '<div class="form-group"><button class="btn btn-time" onclick="openMonthlyTimeFromEdit()" style="width:100%">⏰ 月度时段 (' + timesCount + ' 个时段)</button></div>';
   
   document.getElementById('editModalTitle').textContent = '编辑月度安排';
   document.getElementById('editModalBody').innerHTML = body;
   document.getElementById('editModalSave').onclick = saveEditMonthly;
   document.getElementById('editModal').classList.add('active');
+}
+
+function openMonthlyTimeFromEdit() {
+  currentTimeSelectMode = 'monthly';
+  openTimeSelectModal();
 }
 
 function saveEditMonthly() {
@@ -1324,7 +1417,7 @@ function saveEditMonthly() {
     return;
   }
   const oldName = state.monthlySchedules[currentEditItem].name;
-  state.monthlySchedules[currentEditItem] = { name, category, priority, hours, ctdp };
+  state.monthlySchedules[currentEditItem] = { name, category, priority, hours, ctdp, times: [...state.monthlyTimes] };
   if (ctdp && !state.ctdpRecords[name]) {
     state.ctdpRecords[name] = state.ctdpRecords[oldName] || 0;
   }
@@ -1334,6 +1427,7 @@ function saveEditMonthly() {
   }
   currentEditItem = null;
   currentEditType = null;
+  state.monthlyTimes = [];
   closeEditModal();
   renderMonthlyList();
   renderTodoList();
@@ -2117,7 +2211,8 @@ function saveToStorage() {
     deletedCells: state.deletedCells,
     manualSwaps: state.manualSwaps,
     selectedTimes: state.selectedTimes,
-    categoryTimes: state.categoryTimes
+    categoryTimes: state.categoryTimes,
+    monthlyTimes: state.monthlyTimes
   };
   localStorage.setItem('plannerData', JSON.stringify(data));
 }
